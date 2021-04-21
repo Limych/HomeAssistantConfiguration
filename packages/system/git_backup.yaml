@@ -10,14 +10,6 @@ shell_command:
   # git_auto_fetch: '/usr/bin/env sh /config/bin/check_ci_status.sh && /usr/bin/env sh /config/bin/git_fetch.sh'
 
 
-# binary_sensor:
-#   - platform: rest
-#     name: "Travis-CI Status"
-#     resource: https://api.travis-ci.org/repos/Limych/HomeAssistantConfiguration?branch=master
-#     scan_interval: 60
-#     value_template: "{{ value_json.last_build_status|int(1) == 0 }}"
-
-
 # automation:
   # - alias: "[System] Autoupdate configs from GitHub"
   #   initial_state: on
