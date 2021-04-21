@@ -32,10 +32,10 @@ I am running Hass.io on [Raspberry Pi 3 Model B+](https://www.raspberrypi.org/pr
 * **Personal gadgets:**
     1. Android devices (Phones and Tablets);
 * **Media:**
-    1. [FreeNAS](https://freenas.org/) File Server;
+    1. [TrueNAS](https://freenas.org/) File Server;
     1. [Emby](https://emby.media/) Media Server;
     1. [Plex](https://www.plex.tv/) Media Server;
-    1. Two [LinkPlay-driven](https://github.com/Limych/media_player.linkplay) Wireless Speakers;
+    1. Two [LinkPlay-driven](https://github.com/nagyrobi/home-assistant-custom-components-linkplay) Wireless Speakers;
     1. Smart TV driven by Android TV;
 * **Network:**
     1. [Transmission](https://transmissionbt.com/) BitTorrent Client;
@@ -47,13 +47,14 @@ I am running Hass.io on [Raspberry Pi 3 Model B+](https://www.raspberrypi.org/pr
     1. [OPNsense-driven](https://opnsense.org/) Network Firewall;
     1. [Beward DS06M](https://www.beward.ru/katalog/ip-videodomofony/vyzyvnye-paneli/vyzyvnaya-panel-ds06m/) Doorbell;
     1. Home made security sensor (PIR & front door opening) direct wired to Home Assistant Raspberry PI;
-    1. Home made ESP32-based [ESPHome-driven](https://esphome.io/) climate (outdoor <s>Humidity, Temperature</s> & Illuminance and indoor Pressure, <s>Humidity,</s> Temperature, CO2 & tVOC) & security (PIR) sensor;
+    1. Zigbee [Xiaomi Aqara Motion Sensors](https://www.aqara.com/us/motion_sensor.html) at all home rooms;
 * **Climate:**
-    1. Home made ESP32-based [ESPHome-driven](https://esphome.io/) climate (outdoor <s>Humidity, Temperature</s> & Illuminance and indoor Pressure, <s>Humidity,</s> Temperature, CO2 & tVOC) & security (PIR) sensor;
-    1. Sonoff TH10 [ESPHome-driven](https://esphome.io/) bathroom climate sensor (Humidity & Temperature) & fan controller;
+    1. Sonoff TH10 [ESPHome-driven](https://esphome.io/) kitchen climate sensor (Humidity & Temperature) & cooling fan controller;
+    1. Sonoff TH10 [ESPHome-driven](https://esphome.io/) bathroom climate sensor (Humidity & Temperature) & exhaust fan controller;
     1. [JQ-300 Indoor Air Quality Meter](https://community.home-assistant.io/t/jq-300-200-100-indoor-air-quality-meter/189098);
 * **Misc:**
-    1. Android tablet based [WallPanel-driven](https://thanksmister.com/wallpanel-android/) Home Assistant dashboard;
+    1. <s>Android tablet based [WallPanel-driven](https://thanksmister.com/wallpanel-android/) Home Assistant dashboard;</s>
+    1. Zigbee controller USB stick installed to Home Assistant Raspberry PI;
 
 </details>
 
@@ -128,7 +129,6 @@ Automations view
 
 * [Backup Hass.io to Google Drive](https://github.com/samccauley/addon-hassiogooglebackup#readme);
 * [HACS](https://github.com/custom-components/hacs);
-* [IDE](https://github.com/hassio-addons/addon-ide/blob/master/README.md);
 * [Log Viewer](https://github.com/hassio-addons/addon-log-viewer);
 * [MariaDB](https://www.home-assistant.io/addons/mariadb/) — official addon;
 * [Mosquitto MQTT broker](https://www.home-assistant.io/addons/mosquitto/) — official addon;
