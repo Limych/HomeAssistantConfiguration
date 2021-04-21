@@ -1,0 +1,121 @@
+homeassistant:
+  customize_glob:
+    sensor.kitchen_*:
+      friendly_name: "Кухня"
+    binary_sensor.kitchen_*:
+      friendly_name: "Кухня"
+
+
+group:
+  kitchen_lights:
+    name: "Свет на Кухне"
+    entities:
+      - light.shelly_kitchen_tabletop_light
+      
+      
+binary_sensor:
+  - platform: template
+    sensors:
+      kitchen_motion:
+        device_class: motion
+        value_template: >-
+          {{ is_state('binary_sensor.kitchen_1_motion', 'on')
+          or is_state('binary_sensor.kitchen_2_motion', 'on') }}
+
+
+sensor:
+  - platform: template
+    sensors:
+      kitchen_illuminance:
+        device_class: illuminance
+        unit_of_measurement: "lx"
+        value_template: >-
+          {{ ((states('sensor.kitchen_1_illuminance')|float
+              + states('sensor.kitchen_2_illuminance')|float ) / 2)|int }}
+
+
+# iaquk:
+#   kitchen:
+#     sources:
+#       temperature: sensor.kitchen_temperature
+#       humidity: sensor.kitchen_humidity
+#       co2: sensor.kitchen_eco2
+#       tvoc: sensor.kitchen_tvoc
+
+
+automation:
+#  - alias: '[House] Kitchen Fan Auto'
+#    initial_state: on
+#    trigger:
+#      - platform: state
+#        entity_id: sensor.kitchen_temperature
+#      - platform: state
+#        entity_id: binary_sensor.kitchen_motion
+#        to: 'on'
+#    condition:
+#      - condition: state
+#        entity_id: binary_sensor.is_day
+#        state: 'on'
+#      - condition: state
+#        entity_id: binary_sensor.kitchen_motion
+#        state: 'on'
+#    variables:
+#      outer_temp: states('sensor.gismeteo_temperature')|float
+#      inner_temp: states('sensor.kitchen_temperature')|float
+#    action:
+#      - service_template: >
+#          {% if outer_temp > 24 and inner_temp > (outer_temp
+#                - 2 * ((states('switch.shelly_kitchen_fan_plug') == 'on')|int)) %}
+#            switch.turn_on
+#          {% else %}
+#            switch.turn_off
+#          {% endif %}
+#        data:
+#          entity_id: switch.shelly_kitchen_fan_plug
+
+#  - alias: '[House] Kitchen Fan Stop when not needed'
+#    initial_state: on
+#    trigger:
+#      - platform: state
+#        entity_id: binary_sensor.is_day
+#        to: 'off'
+#      - platform: state
+#        entity_id: binary_sensor.kitchen_motion
+#        to: 'off'
+#        for:
+#          minutes: !secret nomotion_minutes
+#    action:
+#      - service: switch.turn_off
+#        data:
+#          entity_id: switch.shelly_kitchen_fan_plug
+  
+  - alias: '[Lights] Kitchen Lights On when Motion'
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        to: 'on'
+      - platform: numeric_state
+        entity_id: sensor.kitchen_illuminance
+        below: 35
+    condition:
+      - condition: state
+        entity_id: binary_sensor.kitchen_motion
+        state: 'on'
+      - condition: numeric_state
+        entity_id: sensor.kitchen_illuminance
+        below: 35
+    action:
+      service: light.turn_on
+      entity_id: light.shelly_kitchen_tabletop_light
+  
+  - alias: '[Lights] Kitchen Lights Off when no Motion'
+    trigger:
+      platform: state
+      entity_id: binary_sensor.kitchen_motion
+      to: 'off'
+      for:
+        minutes: !secret nomotion_minutes
+    action:
+      service: homeassistant.turn_off
+      entity_id: group.kitchen_lights
+

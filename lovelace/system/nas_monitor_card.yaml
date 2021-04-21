@@ -1,0 +1,245 @@
+type: vertical-stack
+cards:
+  - type: entities
+    title: "NAS сервер"
+    show_header_toggle: false
+    entities:
+      - entity: sensor.nas_last_boot
+        name: "Last boot"
+  # - type: markdown
+  #   content: |
+  #     [[ sensor.nas_alerts ]]
+
+  - type: horizontal-stack
+    cards:
+      - type: 'custom:flex-horseshoe-card'
+        entities:
+          - entity: sensor.nas_cpu_use_percent
+            decimals: 0
+            name: 'CPU Load'
+          - entity: sensor.nas_cpu_load_5m
+            decimals: 2
+            unit: '5m'
+          - entity: sensor.nas_cpu_temperature
+            decimals: 1
+            name: 'CPU Temp'
+        show:
+          scale_tickmarks: true
+          horseshoe_style: 'colorstop'
+        layout:
+          hlines:
+            - id: 0
+              xpos: 50
+              ypos: 46
+              length: 70
+              styles:
+                - opacity: 0.2;
+          vlines:
+            - id: 0
+              xpos: 50
+              ypos: 62
+              length: 32
+              styles:
+                - opacity: 0.2;
+          states:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 38
+              styles:
+                - font-size: 4em;
+                - opacity: 0.9;
+            - id: 1
+              entity_index: 1
+              xpos: 46
+              ypos: 62
+              styles:
+                - font-size: 1.7em;
+                - text-anchor: end;
+            - id: 2
+              entity_index: 2
+              xpos: 54
+              ypos: 62
+              styles:
+                - font-size: 1.7em;
+                - text-anchor: start;
+          names:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 100
+              styles:
+                - font-size: 1.4em;
+            - id: 1
+              entity_index: 1
+              xpos: 46
+              ypos: 70
+              styles:
+                - font-size: 1em;
+                - text-anchor: end;
+                - opacity: 0.7;
+            - id: 2
+              entity_index: 2
+              xpos: 54
+              ypos: 70
+              styles:
+                - font-size: 1em;
+                - text-anchor: start;
+                - opacity: 0.7;
+        horseshoe_scale:
+          min: 0
+          max: 120
+          color: 'var(--primary-background-color)'
+          width: 6
+        color_stops:
+          0: '#008000'  # green
+          70: '#ADFF2F'  # yellow green
+          100: '#FFA500'  # orange
+          300: '#FF0000'  # red
+          
+      - type: 'custom:flex-horseshoe-card'
+        entities:
+          - entity: sensor.nas_memory_use_percent
+            decimals: 0
+            name: 'RAM Use'
+          - entity: sensor.nas_memory_free
+            decimals: 0
+            name: '(free)'
+          - entity: sensor.nas_swap_use
+            decimals: 0
+            name: '(swap)'
+        show:
+          scale_tickmarks: true
+          horseshoe_style: 'colorstop'
+        layout:
+          hlines:
+            - id: 0
+              xpos: 50
+              ypos: 46
+              length: 70
+              styles:
+                - opacity: 0.2;
+          vlines:
+            - id: 0
+              xpos: 50
+              ypos: 62
+              length: 32
+              styles:
+                - opacity: 0.2;
+          states:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 38
+              styles:
+                - font-size: 4em;
+                - opacity: 0.9;
+            - id: 1
+              entity_index: 1
+              xpos: 46
+              ypos: 62
+              styles:
+                - font-size: 1.7em;
+                - text-anchor: end;
+            - id: 2
+              entity_index: 2
+              xpos: 54
+              ypos: 62
+              styles:
+                - font-size: 1.7em;
+                - text-anchor: start;
+          names:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 100
+              styles:
+                - font-size: 1.4em;
+            - id: 1
+              entity_index: 1
+              xpos: 46
+              ypos: 70
+              styles:
+                - font-size: 1em;
+                - text-anchor: end;
+                - opacity: 0.7;
+            - id: 2
+              entity_index: 2
+              xpos: 54
+              ypos: 70
+              styles:
+                - font-size: 1em;
+                - text-anchor: start;
+                - opacity: 0.7;
+        horseshoe_scale:
+          min: 0
+          max: 100
+          color: 'var(--primary-background-color)'
+          width: 6
+        color_stops:
+          0: '#008000'  # green
+          90: '#FF0000'  # red
+          
+      - type: 'custom:flex-horseshoe-card'
+        entities:
+          - entity: sensor.nas_pool_pool1_use_percent
+            decimals: 1
+            name: 'Pool Use'
+          - entity: sensor.nas_pool_pool1_health
+        show:
+          scale_tickmarks: true
+          horseshoe_style: 'colorstop'
+        layout:
+          hlines:
+            - id: 0
+              xpos: 50
+              ypos: 46
+              length: 70
+              styles:
+                - opacity: 0.2;
+          states:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 38
+              styles:
+                - font-size: 4em;
+                - opacity: 0.9;
+            - id: 1
+              entity_index: 1
+              xpos: 50
+              ypos: 62
+              styles:
+                - font-size: 1.7em;
+          names:
+            - id: 0
+              entity_index: 0
+              xpos: 50
+              ypos: 100
+              styles:
+                - font-size: 1.4em;
+            - id: 1
+              entity_index: 1
+              xpos: 50
+              ypos: 70
+              styles:
+                - font-size: 1em;
+                - opacity: 0.7;
+        horseshoe_scale:
+          min: 0
+          max: 100
+          color: 'var(--primary-background-color)'
+          width: 6
+        color_stops:
+          0: '#008000'  # green
+          80: '#FFA500'  # orange
+          90: '#FF0000'  # red
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: glance
+    filter:
+      include:
+        - entity_id: 'sensor.nas_disk_*_temperature'

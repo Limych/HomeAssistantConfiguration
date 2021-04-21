@@ -1,0 +1,74 @@
+type: vertical-stack
+cards:
+- type: entities
+  show_header_toggle: false
+  style: |
+    ha-card {
+      background-image: url("/local/lovelace/home/bg_sound.jpg");
+      background-size: cover;
+      background-position: center;
+    }
+  entities:
+    - type: custom:mini-media-player
+      entity: media_player.kitchen
+      group: true
+      source: icon
+      info: short
+      hide:
+        icon: true
+        power: true
+        # source: true
+      speaker_group:
+        platform: linkplay
+        show_group_count: true
+        entities:
+          - entity_id: media_player.kitchen
+            name: "Кухня"
+          - entity_id: media_player.living_room
+            name: "Гостиная"
+    # - type: custom:mini-media-player
+    #   entity: media_player.kitchen
+    #   name: "Кухня"
+    #   group: true
+    #   source: icon
+    #   hide:
+    #     icon: true
+    #     power: true
+    #     # source: true
+    # - type: custom:mini-media-player
+    #   entity: media_player.living_room
+    #   name: "Гостиная"
+    #   group: true
+    #   source: icon
+    #   hide:
+    #     icon: true
+    #     power: true
+    #     # source: true
+    - type: custom:button-card
+      name: "Фоновая громкость"
+      icon: mdi:volume-high
+      size: 80%
+      color: rgb(117, 111, 189)
+      color_type: card
+      layout: icon_name
+      tap_action:
+        action: call-service
+        service: automation.trigger
+        service_data:
+          entity_id: automation.media_set_base_volume
+      styles:
+        card:
+          - height: 50px
+    - type: custom:button-card
+      entity: input_boolean.play_radio
+      color: rgb(117, 189, 111)
+      color_type: card
+      layout: icon_name
+      # show_name: False
+      styles:
+        card:
+          - height: 50px
+      state:
+        - value: "off"
+          color: rgba(255, 255, 255, 0.3)
+    - input_select.radio_station

@@ -1,0 +1,4 @@
+input_boolean:
+  cleaning_day:
+    name: "День Уборки"
+    icon: mdi:broom

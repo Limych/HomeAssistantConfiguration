@@ -1,0 +1,221 @@
+homeassistant:
+  customize:
+    media_player.kitchen:
+      friendly_name: "Колонки на кухне"
+      icon: mdi:speaker-wireless
+    media_player.living_room:
+      friendly_name: "Колонки в гостиной"
+      icon: mdi:speaker-wireless
+
+
+stream:
+
+ffmpeg:
+  ffmpeg_bin: /usr/bin/ffmpeg
+
+
+media_player:
+  - platform: linkplay
+    name: "Kitchen"
+    host: !secret speaker_kitchen_host
+    lastfm_api_key: !secret lastfm_apikey
+    icecast_metadata: 'StationNameSongTitle'
+    sources: 
+      {
+        'bluetooth': 'Bluetooth',
+        'line-in': 'Line-in', 
+      }
+  - platform: linkplay
+    name: "Living Room"
+    host: !secret speaker_livingroom_host
+    lastfm_api_key: !secret lastfm_apikey
+    icecast_metadata: 'StationNameSongTitle'
+    sources: 
+      {
+        'bluetooth': 'Bluetooth',
+        'line-in': 'Line-in', 
+      }
+
+  # - platform: emby
+  #   host: !secret emby_host
+  #   api_key: !secret emby_apikey
+
+
+group:
+  all_media_players:
+    icon: mdi:speaker-multiple
+    entities:
+      - media_player.kitchen
+      - media_player.living_room
+
+  all_speakers:
+    icon: mdi:speaker-multiple
+    entities:
+      - media_player.kitchen
+      - media_player.living_room
+
+
+# plex:
+#   host: !secret plex_host
+#   token: !secret plex_apikey
+
+
+input_boolean:
+  play_radio:
+    name: "Радио"
+    icon: mdi:radio
+
+
+input_select:
+  radio_station:
+    name: "Радио-станция"
+    options:
+      # INPUT_BEGIN
+      - "Radio Subasio +"
+      # INPUT_END
+    icon: mdi:radio
+
+
+automation:
+  # - alias: "[Media] Stop Radio when Movie is Playing"
+  #   initial_state: on
+  #   trigger:
+  #     - platform: state
+  #       entity_id: media_player.emby_emby_for_android_mobile_lenovo_tbx704l
+  #       to: 'playing'
+  #     - platform: state
+  #       entity_id: media_player.emby_emby_mobile_chrome
+  #       to: 'playing'
+  #     - platform: state
+  #       entity_id: media_player.emby_emby_mobile_chrome_3
+  #       to: 'playing'
+  #     - platform: state
+  #       entity_id: media_player.plex_notebook
+  #       to: 'playing'
+  #     - platform: state
+  #       entity_id: media_player.plex_willy
+  #       to: 'playing'
+  #   action:
+  #     - service: input_boolean.turn_off
+  #       entity_id: input_boolean.play_radio
+
+  - alias: '[Media] Play Radio'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.play_radio
+        to: 'on'
+      - platform: state
+        entity_id: input_select.radio_station
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.play_radio
+      - service: media_player.play_media
+        data_template:
+          entity_id: group.all_speakers
+          media_content_type: 'url'
+          media_content_id: >-
+            {# AUTOMATION_BEGIN #}
+            {% if is_state("input_select.radio_station", "Radio Subasio +") %}https://icy.unitedradio.it/SubasioPiu.mp3
+            {# AUTOMATION_END #}
+            {% endif %}
+      - condition: template
+        value_template: "{{ state_attr('media_player.kitchen','volume_level') == 0 or state_attr('media_player.kitchen','is_volume_muted') }}"
+      - service: automation.trigger
+        entity_id: automation.media_set_base_volume
+
+  - alias: "[Media] Restart Radio If It Stopped"
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: media_player.kitchen
+        to: 'idle'
+        for:
+          seconds: 10
+      # - platform: state
+      #   entity_id: media_player.living_room
+      #   to: 'paused'
+      #   for:
+      #     seconds: 10
+    action:
+      - condition: state
+        entity_id: input_boolean.play_radio
+        state: 'on'
+      - service: automation.trigger
+        entity_id: automation.media_play_radio
+
+  - alias: "[Media] Stop Radio"
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.play_radio
+        to: 'off'
+    action:
+      - service: media_player.media_stop
+        entity_id: group.all_speakers
+
+  - alias: "[Media] Set base volume"
+    initial_state: on
+    trigger: []
+    action:
+      - service: media_player.volume_set
+        data:
+          entity_id: group.all_speakers
+          volume_level: 0.20
+
+  - alias: '[Media] Stop All Players at Night'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.owners_are_awake
+        to: 'off'
+    action:
+      - service: media_player.media_stop
+        entity_id: group.all_speakers
+      - service: media_player.volume_set
+        data:
+          entity_id: group.all_speakers
+          volume_level: 0
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.play_radio
+
+  - alias: "[Media] Play Radio on Wake"
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.owners_are_awake
+        to: 'on'
+    condition:
+      condition: and
+      conditions:
+        - condition: state
+          entity_id: input_boolean.play_radio
+          state: 'off'
+          for:
+            hours: 5
+        - condition: state
+          entity_id: input_boolean.guest_mode
+          state: 'off'
+    action:
+      - service: automation.trigger
+        entity_id: automation.media_play_radio
+
+  # - alias: 'Notify by TTS that Mary has arrived'
+  #   trigger:
+  #     []
+  #   action:
+  #     - service: linkplay.snapshot
+  #       data:
+  #         entity_id: group.all_speakers
+  #     - service: media_player.volume_set
+  #       data:
+  #         entity_id: group.all_speakers
+  #         volume_level: 0.8
+  #     - service: tts.google_translate_say
+  #       data:
+  #         entity_id: group.all_speakers
+  #         message: 'Mary arrived home'
+  #     - delay: '00:00:02'
+  #     - service: linkplay.restore
+  #       data:
+  #         entity_id: group.all_speakers

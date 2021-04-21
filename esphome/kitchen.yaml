@@ -1,0 +1,128 @@
+substitutions:
+  device_name: "Kitchen"
+  device_ip: 192.168.1.65
+  
+  default_timeout: '5'
+  
+  <<: !include secrets.yaml
+
+esphome:
+  name: kitchen
+  platform: ESP8266
+  board: esp01_1m
+
+status_led:
+  pin:
+    number: GPIO13
+    inverted: True
+
+wifi:
+  ssid: $wifi_ssid
+  password: !secret wifi_password
+  domain: !secret network_domain
+
+  manual_ip:
+    static_ip: $device_ip
+    gateway: !secret network_gateway
+    subnet: !secret network_mask
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "${device_name} Fallback Hotspot"
+    password: !secret ota_password
+
+captive_portal:
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: !secret ota_password
+  services:
+    - service: run_fan_with_timeout
+      variables:
+        duration: int
+      then:
+        - if:
+            condition:
+              script.is_running: run_with_timeout
+            then:
+              - logger.log: "Fan run timer terminated"
+              - script.stop: run_with_timeout
+        - if:
+            condition:
+              lambda: 'return duration > 0;'
+            then:
+              - globals.set:
+                  id: run_timeout
+                  value: !lambda 'return duration;'
+            else:
+              - globals.set:
+                  id: run_timeout
+                  value: $default_timeout
+        - script.execute: run_with_timeout
+
+ota:
+  password: !secret ota_password
+
+web_server:
+  port: 80
+  auth:
+    username: admin
+    password: !secret web_server_password
+
+globals:
+  - id: run_timeout
+    type: int
+
+switch:
+  - platform: gpio
+    name: "${device_name} Switch"
+    id: kitchen_switch
+    pin: GPIO12
+
+binary_sensor:
+  - platform: gpio
+    name: "${device_name} Switch Button"
+    id: kitchen_switch_button
+    pin:
+      number: GPIO0
+      inverted: True
+    on_press:
+      then:
+        - if:
+            condition:
+              script.is_running: run_with_timeout
+            then:
+              - logger.log: "Switch run timer terminated"
+              - script.stop: run_with_timeout
+              - switch.turn_off: kitchen_switch
+            else:
+              - globals.set:
+                  id: run_timeout
+                  value: $default_timeout
+              - script.execute: run_with_timeout
+
+sensor:
+  - platform: uptime
+    name: "${device_name} Uptime"
+    id: device_uptime
+
+  - platform: dht
+    model: SI7021
+    pin: GPIO14
+    update_interval: 60s
+    humidity:
+      name: "${device_name} Humidity"
+    temperature:
+      name: "${device_name} Temperature"
+
+script:
+  - id: run_with_timeout
+    then:
+      - switch.turn_on: kitchen_switch
+      - logger.log: "Switch run timer reset"
+      - delay: !lambda 'return id(run_timeout) * 60000;'
+      - logger.log: "Switch run timeout reached. Turning off switch"
+      - switch.turn_off: kitchen_switch

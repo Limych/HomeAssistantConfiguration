@@ -1,0 +1,81 @@
+title: Settings
+icon: mdi:cogs
+path: settings
+panel: true
+cards:
+  - type: custom:layout-card
+    max_columns: 3
+    cards:
+#      - type: custom:auto-entities
+#        unique: true
+#        card:
+#          type: entities
+#          head:
+#            type: section
+#            label: "Потребляемая мощность"
+#        filter:
+#          include:
+#            - entity_id: sensor.daily_energy_consumption
+#            - entity_id: sensor.monthly_energy_consumption
+#            - entity_id: sensor.total_energy_consumption
+#            - entity_id: "*.daily_energy_consumption_*"
+#            - entity_id: "*.monthly_energy_consumption_*"
+#            - entity_id: "*_power"
+#      #     exclude:
+#      #       - entity_id: "*_2"
+#      #       - entity_id: "*_management"
+
+      - type: custom:auto-entities
+        unique: true
+        card:
+          type: entities
+          title: "Battery warning"
+        filter:
+          include:
+            - group: group.battery_alert
+
+      - type: custom:auto-entities
+        show_empty: true
+        unique: true
+        card:
+          type: entities
+          title: "Shelly need update"
+          show_header_toggle: false
+        filter:
+          include:
+            - entity_id: '*firmware_update*'
+
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: entities
+          title: "Батарейки"
+          show_header_toggle: false
+        filter:
+          include:
+            - group: group.battery_status
+
+      - type: vertical-stack
+        cards:
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: entities
+              title: "Things that are probably broken"
+              show_header_toggle: false
+            filter:
+              include:
+                - state: "unknown"
+                - state: "unavailable"
+              exclude:
+                - domain: group
+                - domain: input_text
+                - domain: history_graph
+                - entity_id: "media_player.emby_*"
+
+      - !include cards/zigbee.yaml
+
+      - !include links_card.yaml
+      - !include dev_card_content.yaml

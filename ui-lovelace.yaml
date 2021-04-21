@@ -1,0 +1,29 @@
+custom_header:
+  compact_mode: true
+title: Home
+cch:
+  menu: show
+  notifications: show
+  voice: hide
+  options: clock
+  clock_format: 24
+  swipe: true
+  swipe_animate: swipe
+preload_cards:
+  - conditional
+  - custom:vertical-style-card
+views:
+  - !include lovelace/00_home_view.yaml
+  - !include lovelace/05_weather_view.yaml
+  - !include lovelace/10_home_info_view.yaml
+  - !include lovelace/20_lights_view.yaml
+  - !include lovelace/30_system_info_view.yaml
+  # - !include lovelace/31_system_graphs.yaml
+  - !include lovelace/40_security_view.yaml
+  # - !include lovelace/60_traffic_view.yaml
+  # - !include lovelace/80_automations_view.yaml
+  # - !include lovelace/101_dashboard.yaml
+  # - !include lovelace/areas.yaml
+
+  - !include lovelace/90_settings_view.yaml
+  - !include lovelace/99_test_view.yaml

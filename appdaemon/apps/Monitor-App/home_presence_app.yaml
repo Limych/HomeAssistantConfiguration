@@ -1,0 +1,64 @@
+home_presence_app:
+  module: home_presence_app
+  class: HomePresenceApp
+  plugin: 
+    - HASS
+    - MQTT
+  monitor_topic: presence
+  #mqtt_event: MQTT
+  user_device_domain: device_tracker
+  #everyone_not_home: everyone_not_home
+  #everyone_home: everyone_home
+  #somebody_is_home: somebody_is_home
+  depart_check_time: 30
+  depart_scans: 3
+  minimum_confidence: 60
+  not_home_timeout: 15
+  system_check: 30
+  system_timeout: 60
+  home_gateway_sensors:
+    - binary_sensor.front_door
+  
+  # reboot the all nodes at 12 midnight on Mondays and Thursdays
+#  scheduled_restart:
+#    time: 00:00:01
+#    days:
+#      - mon
+#      - thu
+#    location: all
+
+  # other location configuration options
+    # location: living_room, kitchen
+
+    #location:
+    # - living_room
+    # - kitchen
+
+  home_motion_sensors:
+    - binary_sensor.hallway_motion
+    - binary_sensor.kitchen_motion
+    - binary_sensor.bedroom_motion
+    - binary_sensor.living_room_motion
+    
+  log_level: DEBUG
+  known_devices:
+    - "DE:CB:5B:68:7C:F1 Limych Phone B"
+#    - "D0:F8:8C:A1:EF:CB Limych Tablet L"
+
+  known_beacons:
+    - "80:EA:CA:83:51:10 Limych Watch"
+  
+  remote_monitors:
+    disable: False
+    
+    hallway:
+      auto_reboot_when_offline: False
+      
+    bedroom:
+      host: !secret bedroom_monitor_host
+      username: !secret bedroom_monitor_username
+      password: !secret bedroom_monitor_password
+      reboot_command: sudo /sbin/reboot now
+      auto_reboot_when_offline: True
+      time: 02:00:01
+

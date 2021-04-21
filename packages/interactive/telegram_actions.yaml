@@ -1,0 +1,128 @@
+#
+# This package contains automations that respond to interactive
+# commands by actioning the request
+#
+# DEPENDS ON: Notifications
+#
+
+
+automation:
+  - alias: "[System] Ping-Pong"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/ping'
+    action:
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Pong!"
+
+  # - alias: "[System] Telegram actions help"
+  #   initial_state: on
+  #   trigger:
+  #     platform: event
+  #     event_type: telegram_command
+  #     event_data:
+  #       command: '/help'
+  #   action:
+  #     - service: telegram_bot.send_message
+  #       data_template:
+  #         target: "{{ trigger.event.data.user_id }}"
+  #         message: "Commands:"
+  #         data:
+  #           keyboard:
+  #             - '/ping, /alarm'
+  #             - '/siren'
+
+  - alias: "[System] Maintenance Mode Remote Switch On"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/maintenance_on'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.maintenance_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Maintenance mode has been turned {{ states('input_boolean.maintenance_mode') }}."
+  #
+  - alias: "[System] Maintenance Mode Remote Switch Off"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/maintenance_off'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.maintenance_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Maintenance mode has been turned {{ states('input_boolean.maintenance_mode') }}."
+
+  - alias: "[House] Vacation Mode Remote Switch On"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/vacation_on'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.vacation_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Vacation mode has been turned {{ states('input_boolean.vacation_mode') }}"
+  #
+  - alias: "[House] Vacation Mode Remote Switch Off"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/vacation_off'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.vacation_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Vacation mode has been turned {{ states('input_boolean.vacation_mode') }}"
+
+  - alias: "[House] Guest Mode Remote Switch On"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/guests_on'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.guest_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Guest mode has been turned {{ states('input_boolean.guest_mode') }}."
+  #
+  - alias: "[House] Guest Mode Switch Off"
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: telegram_command
+      event_data:
+        command: '/guests_off'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.guest_mode
+      - service: telegram_bot.send_message
+        data_template:
+          target: "{{ trigger.event.data.user_id }}"
+          message: "Guest mode has been turned {{ states('input_boolean.guest_mode') }}."

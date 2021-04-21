@@ -1,0 +1,244 @@
+homeassistant:
+  customize_glob:
+    sensor.*_percent:
+      unit_of_measurement: '%'
+    #
+    sensor.nas_cpu_*:
+      icon: mdi:memory
+    #
+    sensor.nas_memory_*:
+      icon: mdi:memory
+    #
+    sensor.nas_disk_*:
+      icon: mdi:harddisk
+    sensor.nas_disk_ada0*:
+      friendly_name: "ada0"
+    sensor.nas_disk_ada1*:
+      friendly_name: "ada1"
+    sensor.nas_disk_ada2*:
+      friendly_name: "ada2"
+    sensor.nas_disk_ada3*:
+      friendly_name: "ada3"
+    sensor.nas_disk_ada4*:
+      friendly_name: "ada4"
+    sensor.nas_disk_*_temperature:
+      unit_of_measurement: '°C'
+      scan_interval: 300
+      templates:
+        hs_color: >-
+          if (state > 55) return [0, 85];
+          else if (state > 45) return [40, 70];
+          else if (state < 25) return [40, 70];
+          else return [0, 0];
+    #
+    sensor.nas_pool_*:
+      icon: mdi:harddisk
+    sensor.nas_pool_*_use_percent:
+      icon: mdi:gauge
+      templates:
+        hs_color: >-
+          if (state >= 90) return [0, 85];
+          else if (state >= 80) return [40, 70];
+          else return [0, 0];
+    sensor.nas_pool_*_health:
+      templates:
+        hs_color: >-
+          if (state === 'ONLINE') return [0, 0];
+          else if (state === 'DEGRADED') return [40, 70];
+          else return [0, 85];
+        card_bg_color: >-
+          if (state === 'ONLINE') return 'var(--paper-card-background-color)';
+          else if (state === 'DEGRADED') return 'rgb(200, 150, 0)';
+          else return 'rgb(250, 0, 0)';
+
+  customize:
+    sensor.nas_last_boot:
+      device_class: timestamp
+      unit_of_measurement: ''
+      friendly_name: Last boot
+      icon: mdi:clock
+    #
+    sensor.nas_cpu_use_percent:
+      friendly_name: 'CPU use'
+    sensor.nas_cpu_load_1m:
+      unit_of_measurement: ' '
+      friendly_name: 'Load (1m)'
+    sensor.nas_cpu_load_5m:
+      unit_of_measurement: ' '
+      friendly_name: 'Load (5m)'
+    sensor.nas_cpu_load_15m:
+      unit_of_measurement: ' '
+      friendly_name: 'Load (15m)'
+    sensor.nas_cpu_temperature:
+      device_class: 'temperature'
+      unit_of_measurement: '°C'
+      friendly_name: 'CPU temperature'
+      templates:
+        hs_color: >-
+          if (state > 80) return [0, 85];
+          else if (state > 60) return [40, 70];
+          else return [0, 0];
+    #
+    sensor.nas_memory_use_percent:
+      friendly_name: 'Memory use'
+    sensor.nas_memory_free:
+      unit_of_measurement: 'MiB'
+      friendly_name: 'Memory free'
+    #
+    sensor.nas_swap_use:
+      unit_of_measurement: 'MiB'
+      friendly_name: 'Swap use'
+      icon: mdi:harddisk
+    #
+    sensor.nas_pool_pool1_health:
+      friendly_name: 'Pool health'
+    #
+    sensor.nas_alerts:
+      friendly_name: 'Alert Message'
+      icon: mdi:message-alert
+
+
+sensor:
+  - platform: template
+    sensors:
+      nas_cpu_alert_level:
+        value_template: >-
+          {{ (states("sensor.nas_cpu_use_percent")|int > 100)|int
+           + (states("sensor.nas_cpu_use_percent")|int > 300)|int }}
+      nas_memory_alert_level:
+        value_template: >-
+          {{ (states("sensor.nas_memory_use_percent")|int > 70)|int }}
+      nas_disks_alert_level:
+        value_template: >-
+          {{ [
+            (states("sensor.nas_disk_ada0_temperature")|int < 25)|int
+              + (states("sensor.nas_disk_ada0_temperature")|int > 45)|int
+              + (states("sensor.nas_disk_ada0_temperature")|int > 55)|int,
+            (states("sensor.nas_disk_ada1_temperature")|int < 25)|int
+              + (states("sensor.nas_disk_ada1_temperature")|int > 45)|int
+              + (states("sensor.nas_disk_ada1_temperature")|int > 55)|int,
+            (states("sensor.nas_disk_ada2_temperature")|int < 25)|int
+              + (states("sensor.nas_disk_ada2_temperature")|int > 45)|int
+              + (states("sensor.nas_disk_ada2_temperature")|int > 55)|int,
+            (states("sensor.nas_disk_ada3_temperature")|int < 25)|int
+              + (states("sensor.nas_disk_ada3_temperature")|int > 45)|int
+              + (states("sensor.nas_disk_ada3_temperature")|int > 55)|int,
+          ]|max }}
+      nas_pools_alert_level:
+        value_template: >-
+          {{ [
+            (states("sensor.nas_pool_pool1_use_percent")|int >= 80)|int
+              + (states("sensor.nas_pool_pool1_use_percent")|int >= 90)|int,
+            2 - 2 * (states("sensor.nas_pool_pool1_health") == 'ONLINE')|int
+              - (states("sensor.nas_pool_pool1_health") == 'DEGRADED')|int,
+          ]|max }}
+      nas_alert_level:
+        value_template: >-
+          {{ [
+            states("sensor.nas_cpu_alert_level"),
+            states("sensor.nas_memory_alert_level"),
+            states("sensor.nas_disks_alert_level"),
+            states("sensor.nas_pools_alert_level"),
+          ]|max }}
+
+  - platform: mqtt
+    name: nas_last_boot
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.last_boot }}
+
+  - platform: mqtt
+    name: nas_cpu_use_percent
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ 100 - value_json.cpu_stat.idle | round(1) }}
+
+  - platform: mqtt
+    name: nas_cpu_load_1m
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.cpu_load_1m }}
+
+  - platform: mqtt
+    name: nas_cpu_load_5m
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.cpu_load_5m }}
+
+  - platform: mqtt
+    name: nas_cpu_load_15m
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.cpu_load_15m }}
+
+  - platform: mqtt
+    name: nas_cpu_temperature
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.cpu_temperature }}
+
+  - platform: mqtt
+    name: nas_memory_use_percent
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.memory_stat.percent }}
+
+  - platform: mqtt
+    name: nas_memory_free
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ ((value_json.memory_stat.free | int) / 1024 / 1024) | round(1) }}
+
+  - platform: mqtt
+    name: nas_swap_use
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ ((value_json.swap_stat.used | int) / 1024 / 1024) | round(1) }}
+
+  - platform: mqtt
+    name: nas_disk_ada0_temperature
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.disks_temperature.ada0 }}
+
+  - platform: mqtt
+    name: nas_disk_ada1_temperature
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.disks_temperature.ada1 }}
+
+  - platform: mqtt
+    name: nas_disk_ada2_temperature
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.disks_temperature.ada2 }}
+
+  - platform: mqtt
+    name: nas_disk_ada3_temperature
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.disks_temperature.ada3 }}
+
+  # - platform: mqtt
+  #   name: nas_disk_ada4_temperature
+  #   state_topic: "sensor/nas_state"
+  #   value_template: >-
+  #     {{ value_json.disks_temperature.ada4 }}
+
+  - platform: mqtt
+    name: nas_pool_pool1_use_percent
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.pools_stat.pool1.percent }}
+
+  - platform: mqtt
+    name: nas_pool_pool1_health
+    state_topic: "sensor/nas_state"
+    value_template: >-
+      {{ value_json.pools_stat.pool1.health }}
+
+#  - platform: mqtt
+#    name: nas_alerts
+#    state_topic: "sensor/nas_state"
+#    value_template: >-
+#      {{ value_json.alerts | regex_replace(find='\[([A-Z]+)\]', replace='<img alt="\\1" src="/local/lovelace_ui/info/icon_\\1.svg" width="30">') }}

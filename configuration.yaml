@@ -1,0 +1,226 @@
+homeassistant:
+  # Name of the location where Home Assistant is running
+  name: !secret home_title
+  # Location required to calculate the time the sun rises and sets
+  latitude: !secret home_latitude
+  longitude: !secret home_longitude
+  # Impacts weather/sunrise data (altitude above sea level in meters)
+  elevation: !secret home_elevation
+  # metric for Metric, imperial for Imperial
+  unit_system: metric
+  # Pick yours from here: http://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  time_zone: !secret home_timezone
+  # Website base URL of Home Assistant
+  external_url: !secret hass_base_url
+  internal_url: !secret hass_base_url_int
+  allowlist_external_dirs:
+    - /tmp
+    - /config/.storage/beward
+    - /config/www
+  packages: !include_dir_named packages
+  # Customization
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 127.0.0.1
+        - "::1"
+        - "fd00::/8"
+        # - !secret trusted_network_1
+        # - !secret trusted_network_2
+  customize_glob:
+    "*.*":
+      custom_ui_state_card: state-card-custom-ui
+    "group.*":
+      hide_control: true
+
+# Load basic components
+api:
+auth:
+config:
+# upnp:
+#   port_mapping: true
+discovery:
+hacs:
+  token: !secret hacs_github_token
+  appdaemon: true
+http:
+  # ssl_certificate: !secret ssl_certificate
+  # ssl_key: !secret ssl_key
+  trusted_proxies: !secret gateway_host_ip
+  use_x_forwarded_for: true
+  ip_ban_enabled: true
+  login_attempts_threshold: 12
+  server_port: !secret hass_port
+mobile_app:
+ssdp:
+system_health:
+updater:
+  reporting: false  # Switch off Google Analytics
+zeroconf:
+#  sensors: false
+
+
+
+# ########################################
+# ###                GUI               ###
+# ########################################
+
+lovelace:
+  mode: yaml
+  resources:
+    - url: /hacsfiles/lovelace-card-tools/card-tools.js
+      type: module
+    - url: https://unpkg.com/moment@2.22.2/moment.js
+      type: js
+    - url: https://fonts.googleapis.com/css?family=Roboto+Condensed
+      type: css
+  
+    - url: /hacsfiles/air-visual-card/air-visual-card.js
+      type: js
+    # - url: /hacsfiles/alarm_control_panel-card.js
+    #   type: js
+    # - url: /hacsfiles/atomic-calendar.js
+    #   type: module
+    - url: /hacsfiles/lovelace-auto-entities/auto-entities.js
+      type: module
+    - url: /hacsfiles/bar-card/bar-card.js
+      type: module
+    - url: /hacsfiles/bignumber-card/bignumber-card.js
+      type: js
+    - url: /hacsfiles/button-card/button-card.js
+      type: module
+    # - url: /hacsfiles/calendar-card.js
+    #   type: module
+    - url: /hacsfiles/lovelace-card-mod/card-mod.js
+      type: module
+    # - url: /hacsfiles/custom-header/custom-header.js
+    #   type: module
+    - url: /local/custom-lovelace/custom-ui.js
+      type: module
+    - url: /local/custom-lovelace/weather-card-chart.js
+      type: module
+    # - url: /hacsfiles/dual-gauge-card.js
+    #   type: js
+    # - url: /hacsfiles/entity-attributes-card.js
+    #   type: js
+    - url: /hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js
+      type: module
+    - url: /hacsfiles/lovelace-fold-entity-row/fold-entity-row.js
+      type: js
+    - url: /hacsfiles/lovelace-layout-card/layout-card.js
+      type: module
+    - url: /hacsfiles/lovelace-card-preloader/lovelace-card-preloader.js
+      type: js
+    # - url: /hacsfiles/light-card.js
+    #   type: js
+    # - url: /hacsfiles/live-camera-card.js?v.0.0.3
+    #   type: module
+    - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
+      type: module
+    - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
+      type: module
+    - url: /local/custom-lovelace/popup-card.js
+      type: js
+    - url: /hacsfiles/secondaryinfo-entity-row/secondaryinfo-entity-row.js
+      type: js
+    - url: /hacsfiles/state-attribute-element/state-attribute-element.js
+      type: js
+    # - url: /hacsfiles/state-element.js
+    #   type: js
+    # - url: /hacsfiles/state-switch.js
+    #   type: js
+    - url: /hacsfiles/text-element/text-element.js
+      type: js
+    # - url: /hacsfiles/toggle-lock-entity-row.js
+    #   type: js
+    - url: /hacsfiles/transmission-card/transmission-card.js
+      type: module
+    # - url: /hacsfiles/upcoming-media-card.js
+    #   type: js
+    # - url: /hacsfiles/username-element.js
+    #   type: js
+
+frontend:   # Enables the frontend
+  themes: !include_dir_merge_named themes/
+map:
+
+
+
+# ########################################
+# ###              LOGGING             ###
+# ########################################
+
+recorder:
+  db_url: !secret db_url
+  purge_keep_days: 14
+  include:
+    domains:
+      - sensor
+      - input_boolean
+      - input_select
+      - input_number
+      - input_text
+      - input_datetime
+      - automation
+      - cover
+      - climate
+      - lock
+      - binary_sensor
+  exclude:
+#    entities: !include exclude.yaml
+    event_types:
+      - service_removed
+      - service_executed
+      - platform_discovered
+      - homeassistant_start
+      - homeassistant_stop
+      - feedreader
+      - service_registered
+      - call_service
+      - component_loaded
+      - logbook_entry
+      - system_log_event
+      - automation_triggered
+      - script_started
+      - timer_out_of_sync
+
+history: !include logging/history.yaml
+logbook: !include logging/logbook.yaml
+logger: !include logging/logger.yaml
+influxdb:
+  host: !secret influxdb_host_ip
+  port: 8086
+  username: !secret db_username
+  password: !secret db_password
+  max_retries: 3
+  default_measurement: state
+
+
+
+# ########################################
+# ###             SERVICES             ###
+# ########################################
+
+sun:
+#shopping_list:
+
+# Devices tracking
+zone: !include_dir_merge_list zones/
+owntracks:
+  max_gps_accuracy: 200
+mqtt:
+  broker: !secret mqtt_host_ip
+  username: !secret mqtt_username
+  password: !secret mqtt_password
+  client_id: !secret home_title
+  discovery: true
+  birth_message:
+    topic: 'homeassistant/status'
+    payload: 'online'
+  will_message:
+    topic: 'homeassistant/status'
+    payload: 'offline'
+
+# scene: !include_dir_list scenes/
+

@@ -1,0 +1,11 @@
+shell_command:
+  clean_temp: 'find /tmp -type f -mtime +7 -exec rm {} \;'
+
+automation:
+  - alias: "[System] Clean temp"
+    initial_state: on
+    trigger:
+      platform: sun
+      event: sunrise
+    action:
+      service: shell_command.clean_temp

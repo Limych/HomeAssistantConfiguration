@@ -1,0 +1,65 @@
+homeassistant:
+  customize:
+    input_boolean.guest_mode:
+      templates:
+#        icon: >
+#          if (state === 'on') return 'mdi:account-group';
+#          else if (state === 'off') return 'mdi:account-multiple-minus';
+        icon_color: >
+          if (state === 'on') return 'rgb(56, 150, 56)';
+          else if (state === 'off') return 'rgb(249, 251, 255)';
+
+
+input_boolean:
+  guest_mode:
+    name: "Гости в Доме"
+    icon: mdi:account-clock
+
+
+automation:
+  - alias: '[House] Guest Mode On by Presence'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: >-
+          device_tracker.guest_ksenia_phone, device_tracker.guest_ivanchev_phone1, device_tracker.guest_ivanchev_phone2,
+          device_tracker.guest_tolya_phone, device_tracker.guest_kent_notebook, device_tracker.guest_ivanchev_notebook,
+          device_tracker.guest_ivanchev_notebook2, device_tracker.guest_iseeyou_phone,
+          device_tracker.guest_iseeyou_laptop
+        to: home
+    action:
+      - service: homeassistant.turn_on
+        entity_id: input_boolean.guest_mode
+      - service: notify.all
+        data_template:
+          title: 'Guest mode on'
+          message: >
+            'Встречайте {{ trigger.to_state.name }}'
+
+  - alias: '[House] Guest Mode On'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.guest_mode
+        from: 'off'
+        to: 'on'
+    action:
+      - service: notify.all
+        data_template:
+          title: 'Guest mode on'
+          message: >
+            'Гости в доме!'
+
+  - alias: '[House] Guest Mode Off'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.guest_mode
+        from: 'on'
+        to: 'off'
+    action:
+      - service: notify.all
+        data_template:
+          title: 'Guest mode off'
+          message: >
+            'Гости ушли к себе…'

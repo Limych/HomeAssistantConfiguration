@@ -1,0 +1,24 @@
+homeassistant:
+  customize_glob:
+    sensor.bedroom_*:
+      friendly_name: "Спальня"
+    binary_sensor.bedroom_*:
+      friendly_name: "Спальня"
+
+
+jq300:
+  username: !secret jq300_username
+  password: !secret jq300_password
+  # devices: none
+  # receive_tvoc_in_ppb: true
+  # receive_hcho_in_ppb: true
+
+
+iaquk:
+  bedroom:
+    sources:
+      humidity: sensor.bedroom_humidity
+      co2: sensor.bedroom_eco2
+      tvoc: sensor.bedroom_tvoc
+      hcho: sensor.bedroom_hcho
+      pm: sensor.bedroom_pm25

@@ -1,0 +1,26 @@
+tts:
+  - platform: google_translate
+    language: 'ru'
+
+
+
+automation:
+  - alias: "[Media] TTS test"
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_select.day_mode
+        to: 'Утро'
+    action:
+      - service: media_player.media_pause
+        entity_id: media_player.kitchen
+      - service: media_player.volume_set
+        data:
+          entity_id: media_player.kitchen
+          volume_level: 0.50
+      - service: tts.google_translate_say
+        entity_id: media_player.kitchen
+        data:
+          message: "С добрым утром!"
+      - service: automation.trigger
+        entity_id: automation.media_set_base_volume

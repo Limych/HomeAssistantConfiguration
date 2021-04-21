@@ -1,0 +1,148 @@
+homeassistant:
+  customize_glob:
+    device_tracker.*_bt:
+      source_type: bluetooth
+    sensor.*_bt:
+      source_type: bluetooth
+
+    binary_sensor.*_motion:
+      device_class: motion
+    binary_sensor.*_occupancy:
+      device_class: motion
+
+
+group:
+  motion:
+    name: "Движение в доме"
+    all: false
+    entities:
+      - binary_sensor.front_door
+      - binary_sensor.hallway_motion
+      - binary_sensor.kitchen_motion
+      - binary_sensor.bedroom_motion
+      - binary_sensor.living_room_motion
+  motion_public:
+    name: "Движение в общих зонах"
+    all: false
+    entities:
+      - binary_sensor.front_door
+      - binary_sensor.hallway_motion
+      - binary_sensor.kitchen_motion
+      - binary_sensor.living_room_motion
+
+  sleeping_owners_some:
+    name: "Хозяева спят (кто-то из)"
+    icon: mdi:sleep
+    all: false
+    entities:
+      - binary_sensor.sleeping_limych
+  sleeping_owners_all:
+    name: "Хозяева спят (все)"
+    icon: mdi:sleep
+    all: true
+    entities:
+      - binary_sensor.sleeping_limych
+
+
+sensor:
+  - platform: mqtt
+    state_topic: 'presence/hallway/status'
+    name: Monitor Hallway
+
+  - platform: mqtt
+    state_topic: 'presence/bedroom/status'
+    name: Monitor Bedroom
+
+
+binary_sensor:
+  - platform: template
+    sensors:
+      presence_owners:
+        friendly_name: "Хозяева в Доме"
+        device_class: presence
+        value_template: >-
+          {{ is_state('person.limych', 'home') }}
+
+      presence:
+        friendly_name: "Люди в Доме"
+        device_class: presence
+        value_template: >-
+          {{ is_state('binary_sensor.presence_owners', 'on')
+          or is_state('input_boolean.guest_mode', 'on')
+          or is_state('group.motion', 'on') }}
+
+
+input_boolean:
+  owners_are_awake:
+    name: "Хозяева не спят"
+    icon: mdi:human-handsup
+
+
+automation:
+  - alias: '[Presence] Initialize on Hass Started'
+    initial_state: on
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "presence/scan/restart"
+
+  - alias: '[Presence] Owners presence On'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_owners
+        to: 'on'
+    condition:
+      - condition: template
+        value_template: "{{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) >= 2 }}"
+    action:
+      - service: notify.limych
+        data_template:
+          message: "Добро пожаловать домой!"
+
+  - alias: '[Presence] Owners presence Off'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_owners
+        to: 'off'
+    condition:
+      - condition: template
+        value_template: "{{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) >= 2 }}"
+    action:
+      - service: notify.limych
+        data_template:
+          message: "Счастливого пути!"
+
+  - alias: '[Presence] Owners are Sleep'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: group.sleeping_owners_all
+        to: 'on'
+      - platform: state
+        entity_id: group.sleeping_owners_some
+        to: 'on'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.owners_are_awake
+
+  - alias: '[Presence] Owners are Awake'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: group.motion_public
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_select.day_mode
+        state: 'Утро'
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.owners_are_awake
+      # - service: notify.all
+      #   data:
+      #     message: 'С добрым утром!'

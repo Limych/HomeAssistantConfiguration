@@ -1,0 +1,42 @@
+input_text:
+  git_commit_message:
+    name: "Commit Message"
+    initial: "Commit from Hassio"
+
+
+shell_command:
+  git_commit: '/usr/bin/env sh /config/bin/git_commit.sh "{{ states.input_text.git_commit_message.state }}"'
+  git_fetch: '/usr/bin/env sh /config/bin/git_fetch.sh'
+  # git_auto_fetch: '/usr/bin/env sh /config/bin/check_ci_status.sh && /usr/bin/env sh /config/bin/git_fetch.sh'
+
+
+# binary_sensor:
+#   - platform: rest
+#     name: "Travis-CI Status"
+#     resource: https://api.travis-ci.org/repos/Limych/HomeAssistantConfiguration?branch=master
+#     scan_interval: 60
+#     value_template: "{{ value_json.last_build_status|int(1) == 0 }}"
+
+
+# automation:
+  # - alias: "[System] Autoupdate configs from GitHub"
+  #   initial_state: on
+  #   trigger:
+  #     platform: state
+  #     entity_id: binary_sensor.travis_ci_status
+  #     from: 'off'
+  #     to: 'on'
+  #   action:
+  #     - service: notify.hass_info
+  #       data:
+  #         title: 'Travis-CI'
+  #         message: 'Build was successful'
+  #     - service: shell_command.git_fetch
+
+  # - alias: "[System] Autoupdate configs from GitHub"
+  #   initial_state: on
+  #   trigger:
+  #     platform: time_pattern
+  #     minutes: '/10'
+  #   action:
+  #     service: shell_command.git_auto_fetch

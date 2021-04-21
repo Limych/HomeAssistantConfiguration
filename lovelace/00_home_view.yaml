@@ -1,0 +1,132 @@
+title: Home
+icon: mdi:view-dashboard
+panel: true
+path: home
+cards:
+  - type: custom:layout-card
+    layout: horizontal
+    max_columns: 3
+    cards:
+      - type: horizontal-stack
+        cards:
+          - type: picture-elements
+            image: /local/lovelace/home/time_square.jpg
+            elements:
+              - type: state-label
+                entity: sensor.time
+                tap_action: none
+                style:
+                  top: 35%
+                  left: 50%
+                  font-size: 2.1em
+              - type: state-label
+                entity: sensor.date_day
+                tap_action: none
+                style:
+                  top: 70%
+                  left: 50%
+          - type: picture-entity
+            entity: person.limych
+            image: /local/lovelace/home/limych_square.jpg
+            show_name: false
+            tap_action:
+              action: more-info
+
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: picture-entity
+      #       name: Alarm
+      #       show_name: false
+      #       entity: alarm_control_panel.house
+      #       image: /local/lovelace/home/house_square.jpg
+          # - type: picture-entity
+          #   entity: input_boolean.cleaning_day
+          #   image: /local/lovelace/home/cleaning_square.jpg
+          #   show_name: false
+          #   tap_action:
+          #     action: toggle
+          # - type: picture-glance
+          #   entities:
+          #     - entity: input_boolean.bathroom_drying
+          #       show_state: true
+          #     - entity: sensor.bathroom_humidity
+          #       show_state: true
+          #     - fan.bathroom_fan
+          #   state_image:
+          #     'off': /local/lovelace/home/drying_bw_square.jpg
+          #     'on': /local/lovelace/home/drying_square.jpg
+          #   entity: sensor.car_wash_state
+          #   tap_action:
+          #     action: call-service
+          #     service: input_boolean.toggle
+          #     service_data:
+          #       entity_id: input_boolean.bathroom_drying
+          # - type: picture-entity
+          #   name: "Пылесос"
+          #   show_name: false
+          #   entity: input_select.cleaner_mode
+          #   image: /local/lovelace/home/cleaner_square.jpg
+          #   state_image:
+          #     "Not Today": /local/lovelace/home/cleaner_bw_square.jpg
+
+      # - type: horizontal-stack
+      #   cards:
+          - type: picture-glance
+            entities:
+              - input_boolean.car_clean
+              - binary_sensor.car_wash
+            state_image:
+              'Clean': /local/lovelace/home/car_wash_clean_square.jpg
+              'Bad Weather': /local/lovelace/home/car_wash_weather_square.jpg
+              'Time to Wash': /local/lovelace/home/car_wash_wash_square.jpg
+            entity: sensor.car_wash_state
+            tap_action:
+              action: call-service
+              service: input_boolean.toggle
+              service_data:
+                entity_id: input_boolean.car_clean
+
+          # - !include empty_card.yaml
+          # - !include empty_card.yaml
+
+      # - type: horizontal-stack
+      #   cards:
+      #     - type: picture-entity
+      #       name: Cleaner
+      #       show_name: false
+      #       entity: input_boolean.cleaning_day
+      #       image: /local/lovelace/home/cleaner_square.jpg
+      #       state_image:
+      #         "Not Today": /local/lovelace/home/cleaner_bw_square.jpg
+
+      - !include cards/security.yaml
+
+      - type: vertical-stack
+        cards:
+          - type: custom:weather-card-chart
+            entity: weather.gismeteo
+            title: "Погода"
+            mode: hourly
+            pressure2mmhg: True
+          - !include cards/weather_windy.yaml
+
+      - !include cards/speakers.yaml
+
+        # - type: custom:mini-media-player
+        #   entity: media_player.emby_kodi_kodi_bedroom_tv_lan
+        #   # info: short
+        #   artwork: cover
+        #   hide:
+        #     icon: true
+        #     power_state: false
+        # - type: custom:mini-media-player
+        #   entity: media_player.plex_bedroom_tv
+        #   # info: short
+        #   artwork: cover
+        #   hide:
+        #     icon: true
+        #     power_state: false
+
+      - !include cards/laundry.yaml
+
+      - !include dev_card.yaml

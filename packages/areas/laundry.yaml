@@ -1,0 +1,201 @@
+homeassistant:
+  customize:
+    input_select.washing_machine_status:
+      icon: mdi:washing-machine
+    sensor.washer:
+      icon: mdi:washing-machine
+  customize_glob:
+    input_select.washing_machine_status:
+      templates:
+        hs_color: "if (state === 'Ждёт') return [0, 0];
+        else if (state === 'Работает') return [40, 70];
+        else if (state === 'Очистка') return [0, 85];"
+
+
+input_select:
+  washer_status:
+    name: "Статус Стиральной машины"
+    options:
+      - "Ждёт"
+      - "Работает"
+      - "Очистка"
+
+
+binary_sensor:
+  - platform: template
+    sensors:
+      washer:
+        friendly_name: "Стиральная машина"
+        value_template: "{{ states('sensor.shelly_washer_plug_current_consumption') | float > 3.5 }}"
+        delay_off:
+          minutes: 1
+
+
+input_boolean:
+  bathroom_drying:
+    name: "Сушка белья"
+    icon: mdi:tumble-dryer
+
+
+input_datetime:
+  washing_start:
+    has_date: true
+    has_time: true
+  bathroom_drying_start:
+    has_date: true
+    has_time: true
+
+
+sensor:
+  - platform: template
+    sensors:
+      washing_ontime:
+        value_template: >
+          {{ (as_timestamp(now())
+              - state_attr('input_datetime.washing_start', 'timestamp'))
+             |timestamp_custom('%H:%M:%S', false) }}
+      bathroom_drying_ontime:
+        value_template: >
+          {{ (as_timestamp(now())
+              - state_attr('input_datetime.bathroom_drying_start', 'timestamp'))
+             |timestamp_custom('%H:%M:%S', false) }}
+
+
+automation:
+  - alias: '[House] Washer Mode Idle'
+    initial_state: on
+    trigger: []
+    action:
+      - condition: state
+        entity_id: input_select.washer_status
+        state: "Очистка"
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.washer_status
+          option: "Ждёт"
+
+  - alias: '[House] Washer Mode Running'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.washer
+        to: 'on'
+      - platform: homeassistant
+        event: start
+    condition:
+      - condition: state
+        entity_id: binary_sensor.washer
+        state: 'on'
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.washer_status
+          option: "Работает"
+      - service: input_datetime.set_datetime
+        entity_id: input_datetime.washing_start
+        data_template:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+
+  -
+    hide_entity: true
+    trigger:
+      platform: time_pattern
+      seconds: '*'
+    action:
+      - condition: state
+        entity_id: binary_sensor.washer
+        state: 'on'
+      - service: homeassistant.update_entity
+        entity_id: sensor.washing_ontime
+
+  - alias: '[House] Washer Mode Clean'
+    initial_state: on
+    trigger:
+      - platform: homeassistant
+        event: start
+      - platform: state
+        entity_id: binary_sensor.washer
+        to: 'off'
+      - platform: state
+        entity_id: input_boolean.owners_are_awake
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.washer
+        state: 'off'
+      - condition: state
+        entity_id: input_boolean.owners_are_awake
+        state: 'on'
+    action:
+      - condition: state
+        entity_id: input_select.washer_status
+        state: "Работает"
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.washer_status
+          option: "Очистка"
+      - service: telegram_bot.send_message
+        data:
+          target: !secret telegram_chat_limych
+          message: "Стирка закончена! Пора отправить бельё в сушку."
+          inline_keyboard:
+            - "Запустить сушку:/laundry_dryer_start"
+
+  - alias: '[House] Bathroom Drying Mode On'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.bathroom_drying
+        to: 'on'
+      - platform: event
+        event_type: telegram_command
+        event_data:
+          command: '/laundry_dryer_start'
+    action:
+      - service:  automation.trigger
+        entity_id: automation.house_washer_mode_idle
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.bathroom_drying
+      - service: esphome.bathroom_set_fan_humidity_threshold
+        data_template:
+          threshold: !secret drying_humidity_max
+          duration: 0
+      - service: input_datetime.set_datetime
+        entity_id: input_datetime.bathroom_drying_start
+        data_template:
+          datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
+      - service: notify.limych
+        data:
+          message: "Сушка белья начата."
+
+  -
+    hide_entity: true
+    trigger:
+      platform: time_pattern
+      seconds: '*'
+    action:
+      - condition: state
+        entity_id: input_boolean.bathroom_drying
+        state: 'on'
+      - service: homeassistant.update_entity
+        entity_id: sensor.bathroom_drying_ontime
+
+  - alias: '[House] Bathroom Drying Mode Off'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.bathroom_drying
+        to: 'on'
+        for:
+          hours: !secret drying_duration_hours
+      - platform: state
+        entity_id: input_boolean.bathroom_drying
+        to: 'off'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.bathroom_drying
+      - service: esphome.bathroom_set_fan_humidity_threshold
+        data_template:
+          threshold: 0
+          duration: 0
+

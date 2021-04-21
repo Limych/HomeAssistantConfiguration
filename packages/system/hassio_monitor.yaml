@@ -1,0 +1,158 @@
+homeassistant:
+  customize:
+    sensor.cpu_temperature:
+      templates:
+        hs_color: >-
+          if (state > 80) return [0, 85];
+          else if (state > 60) return [40, 70];
+          else return [0, 0];
+
+
+input_boolean:
+  maintenance_mode:
+    name: "Maintenance Mode"
+    icon: mdi:auto-fix
+
+
+sensor:
+  - platform: uptime
+  - platform: version
+  - platform: version
+    source: hassio
+  # - platform: cert_expiry
+  #   host: !secret hass_domain
+  #   port: 8123
+
+  - platform: systemmonitor
+    resources:
+      - type: last_boot
+      - type: processor_use
+      - type: load_1m
+      - type: load_5m
+      - type: load_15m
+      - type: memory_use_percent
+      - type: memory_free
+      - type: swap_use
+      - type: disk_use_percent
+        arg: /
+      - type: disk_use
+        arg: /
+
+  - platform: command_line
+    name: "CPU Temperature"
+    command: "cat /sys/class/thermal/thermal_zone0/temp"
+    unit_of_measurement: "°C"
+    value_template: '{{ ( value | multiply(0.001) ) | round(1) }}'
+
+  - platform: template
+    sensors:
+      hassio_cpu_alert_level:
+        value_template: >-
+          {{ [
+            (states("sensor.processor_use")|int > 100)|int
+              + (states("sensor.processor_use")|int > 300)|int,
+            (states("sensor.cpu_temperature")|int > 60)|int
+              + (states("sensor.cpu_temperature")|int > 80)|int,
+           ]|max }}
+      hassio_memory_alert_level:
+        value_template: >-
+          {{ (states("sensor.memory_use_percent")|int > 70)|int }}
+      hassio_disks_alert_level:
+        value_template: >-
+          {{ (states("sensor.disk_use_percent")|int >= 75)|int
+           + (states("sensor.disk_use_percent")|int >= 90)|int }}
+      hassio_alert_level:
+        value_template: >-
+          {{ [
+            states("sensor.hassio_cpu_alert_level"),
+            states("sensor.hassio_memory_alert_level"),
+            states("sensor.hassio_disks_alert_level"),
+          ]|max }}
+
+
+rest_command:
+  google_backup:
+    url: 'http://localhost:8055/gb/doBackup'
+    timeout: '300'
+
+
+automation:
+  - alias: '[System] Hass Started'
+    initial_state: on
+    trigger:
+      platform: homeassistant
+      event: start
+    action:
+      - service: system_log.write
+        data_template:
+          message: "-=-=- Hass.io Online -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+          level: warning
+      - service: notify.hass_info
+        data:
+          message: "Hass.io Online"
+      - service: frontend.set_theme
+        data:
+          name: "midnight"
+
+  - alias: '[System] Hass Stopped'
+    initial_state: on
+    trigger:
+      platform: homeassistant
+      event: shutdown
+    action:
+      - service: system_log.write
+        data_template:
+          message: "-=-=- Hass.io Offline -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+          level: warning
+      - service: notify.hass_info
+        data:
+          message: "Hass.io Offline"
+
+  - alias: '[System] Hass Updater'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: sensor.latest_version
+    condition:
+      - condition: template
+        value_template: "{{ (as_timestamp(now()) - as_timestamp(states('sensor.uptime'))) >= 2 }}"
+      - condition: template
+        value_template: "{{ states('sensor.latest_version') != states('sensor.current_version') }}"
+    action:
+      - service: notify.hass_info
+        data_template:
+          title: Upgrade time!
+          message: >-
+            Hass.io version {{ states('sensor.latest_version') }} is now available!
+
+  - alias: '[System] Weekly Backup Monday at 5:00'
+    initial_state: on
+    trigger:
+      platform: time
+      at: '05:00'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+    action:
+      - service: hassio.snapshot_full
+        data_template:
+          name: "Automated Snapshot {{ now().strftime('%F') }}"
+      - service: notify.hass_info
+        data_template:
+          message: "Automated Snapshot {{ now().strftime('%F') }}"
+
+  - alias: '[System] Weekly Backup Monday to Google at 5:30'
+    initial_state: on
+    trigger:
+      - platform: time
+        at: '05:30'
+    condition:
+      - condition: time
+        weekday:
+          - mon
+    action:
+      - service: rest_command.google_backup
+      - service: notify.hass_info
+        data:
+          message: "Automatic snapshot uploaded"

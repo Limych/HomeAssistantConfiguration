@@ -1,0 +1,47 @@
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        entity: input_select.washer_status
+        icon: mdi:washing-machine
+        color_type: card
+        color: var(--paper-card-background-color)
+        state:
+          - value: "Работает"
+            color: var(--paper-toggle-button-checked-button-color)
+          - value: "Очистка"
+            color: var(--paper-toggle-button-unchecked-button-color)
+            styles:
+              card:
+                - animation: blink 1s ease infinite
+        show_name: false
+        tap_action:
+          action: call-service
+          service: automation.trigger
+          service_data:
+            entity_id: automation.house_washer_mode_idle
+      - type: custom:button-card
+        icon: mdi:tumble-dryer
+        color: var(--paper-toggle-button-checked-button-color)
+        color_off: var(--paper-toggle-button-unchecked-button-color)
+        color_type: card
+        entity: input_boolean.bathroom_drying
+        show_name: false
+        action: toggle
+  - type: horizontal-stack
+    cards:
+      - type: custom:bignumber-card
+        entity: sensor.washing_ontime
+        title: "Прошло времени"
+        scale: 15px
+      - type: custom:bignumber-card
+        entity: sensor.bathroom_drying_ontime
+        title: "Прошло времени"
+        scale: 15px
+  - type: horizontal-stack
+    cards:
+      # - !include empty.yaml
+      - type: custom:bar-card
+        entity: sensor.bathroom_humidity
+

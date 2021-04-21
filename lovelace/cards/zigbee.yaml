@@ -1,0 +1,7 @@
+title: "Zigbee"
+type: entities
+entities:
+  - entity: input_boolean.zigbee_permit_join
+  - entity: timer.zigbee_permit_join
+  - entity: sensor.bridge_state
+show_header_toggle: false

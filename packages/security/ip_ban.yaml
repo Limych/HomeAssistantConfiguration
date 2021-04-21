@@ -1,0 +1,14 @@
+automation:
+  - alias: '[Security] IP Ban Notify'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: persistent_notification.ipban
+    condition:
+      - condition: template
+        value_template: "{{ trigger.to_state.state != off }}"
+    action:
+      - service: notify.hass_info
+        data_template:
+          title: "IP address has been banned!"
+          message: "{{ trigger.state.attributes.message }}"

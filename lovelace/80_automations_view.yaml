@@ -1,0 +1,124 @@
+title: Automations
+icon: mdi:flash-auto
+path: automations
+cards:
+  # - type: custom:auto-entities
+  #   show_empty: false
+  #   unique: true
+  #   card:
+  #     type: entities
+  #     show_header_toggle: false
+  #     title: Appdaemon Apps
+  #   filter:
+  #     include:
+  #       - entity_id: input_boolean.ad_*
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: House
+    filter:
+      include:
+        - entity_id: 'automation.house_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Lights
+    filter:
+      include:
+        - entity_id: 'automation.lights_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Presence
+    filter:
+      include:
+        - entity_id: 'automation.presence_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Security
+    filter:
+      include:
+        - entity_id: 'automation.security_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: System
+    filter:
+      include:
+        - entity_id: 'automation.system_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Media
+    filter:
+      include:
+        - entity_id: 'automation.media_*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Temperature
+    filter:
+      include:
+        - entity_id: 'automation.temperature_*'
+
+  # - type: custom:auto-entities
+  #   show_empty: false
+  #   unique: true
+  #   card:
+  #     type: entities
+  #     show_header_toggle: false
+  #     title: TTS
+  #   filter:
+  #     include:
+  #       - entity_id: 'automation.tts*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Alerts
+    filter:
+      include:
+        - entity_id: 'alert.*'
+
+  - type: custom:auto-entities
+    show_empty: false
+    unique: true
+    card:
+      type: entities
+      show_header_toggle: false
+      title: Miscellaneous
+    filter:
+      include:
+        - entity_id: 'automation.misc_*'

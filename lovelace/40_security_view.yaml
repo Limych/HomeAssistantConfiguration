@@ -1,0 +1,70 @@
+title: "Security"
+icon: mdi:shield-home
+path: security
+panel: true
+cards:
+  - type: custom:layout-card
+    layout: horizontal
+    cards:
+      - type: vertical-stack
+        max_columns: 3
+        cards:
+          - type: custom:button-card
+            color_type: card
+            entity: sensor.security_status
+            name: "Статус безопасности"
+            aspect_ratio: 4/1
+            layout: icon_name
+            # tap_action:
+            #   action: call-service
+            #   service: input_boolean.toggle
+            #   service_data:
+            #     entity_id: input_boolean.security_show_more
+            state:
+              - value: "Safe"
+                color: green
+                icon: mdi:shield-check
+              - value: "Door Opened"
+                color: orange
+                icon: mdi:door-open
+              - default:
+                color: red
+                icon: mdi:alert
+                styles:
+                  card:
+                    - animation: blink 2s ease infinite
+          # - type: conditional
+          #   conditions:
+          #     - entity: input_boolean.security_show_more
+          #       state: 'on'
+          #   card:
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: entities
+              show_header_toggle: false
+            filter:
+              include:
+                - entity_id: "binary_sensor.front_door"
+                - entity_id: "binary_sensor.*_motion"
+                - entity_id: "binary_sensor.*_occupancy"
+              exclude:
+                - entity_id: "*_1_*"
+                - entity_id: "*_2_*"
+
+      - type: picture-glance
+        title: "Последний посетитель"
+        entities: []
+        camera_image: camera.front_door_last_ding
+      - type: picture-glance
+        title: "Последнее движение у двери"
+        entities: []
+        camera_image: camera.front_door_last_motion
+      - type: picture-glance
+        title: "Сейчас у двери"
+        entities: []
+        camera_image: camera.front_door_live
+        camera_view: live
+
+      - !include dev_card.yaml

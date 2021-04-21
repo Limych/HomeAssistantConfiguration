@@ -1,0 +1,34 @@
+weather:
+  - platform: gismeteo
+  - platform: gismeteo
+    name: "Gismeteo Daily"
+    mode: daily
+
+
+sensor:
+  # Gismeteo sensors
+  - platform: gismeteo
+    forecast: true
+    monitored_conditions:
+      - condition
+      - temperature
+      - temperature_feels_like
+      - wind_speed
+      - wind_bearing
+      - humidity
+      - pressure
+      - clouds
+      - rain
+      - snow
+      - storm
+      - geomagnetic
+      - water_temperature
+
+
+  - platform: average
+    name: 'Average Temperature'
+    duration:
+      days: 3
+    entities:
+      - sensor.gismeteo_temperature
+      - sensor.narodmon_temperature

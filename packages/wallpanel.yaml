@@ -1,0 +1,107 @@
+homeassistant:
+  customize:
+    sensor.system_security_wallpanel:
+      icon: mdi:tablet-dashboard
+    binary_sensor.wallpanel_motion:
+      friendly_name: "Wallpanel"
+
+
+sensor:
+  - platform: template
+    sensors:
+      system_security_wallpanel:
+        friendly_name: "WallPanel"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.security_wallpanel', 'home') else 'Offline' }}
+
+  - platform: mqtt
+    state_topic: "wallpanel/mywallpanel/sensor/battery"
+    name: "WallPanel Battery Level"
+    unit_of_measurement: "%"
+    value_template: '{{ value_json.value }}'
+    device_class: battery
+
+
+binary_sensor:
+  - platform: mqtt
+    name: "WallPanel Motion RAW"
+    state_topic: "wallpanel/mywallpanel/sensor/motion"
+    payload_on: '{"value":true}'
+    payload_off: '{"value":false}'
+    device_class: motion
+  - platform: mqtt
+    name: "WallPanel Face RAW"
+    state_topic: "wallpanel/mywallpanel/sensor/face"
+    payload_on: '{"value":true}'
+    payload_off: '{"value":false}'
+    device_class: motion
+  - platform: template
+    sensors:
+      wallpanel_motion:
+        value_template: >-
+          {{ is_state('binary_sensor.wallpanel_face_raw', 'on') }}
+        delay_off:
+          minutes: 3
+  - platform: mqtt
+    name: "WallPanel Active"
+    state_topic: "wallpanel/mywallpanel/state"
+    value_template: '{{ value_json.screenOn }}'
+    payload_on: True
+    payload_off: False
+    device_class: occupancy
+  - platform: mqtt
+    name: "WallPanel Battery Charging"
+    state_topic: "wallpanel/mywallpanel/sensor/battery"
+    value_template: '{{ value_json.charging }}'
+    payload_on: True
+    payload_off: False
+    device_class: plug
+
+
+automation:
+  - alias: '[Misc] WallPanel Reset Screen'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.wallpanel_active
+        to: 'off'
+        for:
+          minutes: 1
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "wallpanel/mywallpanel/command"
+          payload: '{"relaunch": true}'
+
+  - alias: '[Misc] WallPanel Charging Alert'
+    initial_state: on
+    trigger:
+      - platform: numeric_state
+        entity_id: sensor.wallpanel_battery_level
+        below: 65
+    condition:
+      condition: or
+      conditions:
+        - condition: state
+          entity_id: binary_sensor.wallpanel_battery_charging
+          state: 'off'
+        - condition: numeric_state
+          entity_id: sensor.wallpanel_battery_level
+          below: 40
+    action:
+      - service: notify.hass_info
+        data_template:
+          title: "Зарядка WallPanel отключена!"
+          message: "Осталось всего {{ states('sensor.wallpanel_battery_level') }} % заряда"
+
+  - alias: "[Misc] WallPanel Front door Ding"
+    initial_state: on
+    trigger:
+      platform: state
+      entity_id: binary_sensor.front_door_ding
+      to: 'on'
+    action:
+      - service: mqtt.publish
+        data:
+          topic: "wallpanel/mywallpanel/command"
+          payload: '{"audio": "https://hassio.lan:8123/local/lovelace/doorbell-ring.mp3"}'

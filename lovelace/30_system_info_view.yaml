@@ -1,0 +1,63 @@
+title: Info
+icon: mdi:lan
+path: info
+panel: true
+cards:
+  - type: custom:layout-card
+    max_columns: 3
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: glance
+              title: "Устройства"
+              show_state: false
+              columns: 4
+            filter:
+              include:
+                - entity_id: sensor.system_gateway
+                - entity_id: sensor.system_nas
+                - entity_id: 'sensor.system_security_*'
+                - entity_id: 'sensor.system_server_*'
+                - entity_id: 'sensor.system_*'
+                - entity_id: 'sensor.*_pc_*'
+              exclude:
+                - entity_id: sensor.system_uplink
+
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: glance
+              title: "Соединения"
+              show_state: false
+              columns: 3
+            filter:
+              include:
+                - entity_id: sensor.connection_internet
+                - entity_id: sensor.connection_wifi_ap
+                - entity_id: 'sensor.connection_*'
+
+      - !include system/nas_monitor_card.yaml
+      - !include system/hass_monitor_card.yaml
+
+      - type: vertical-stack
+        cards:
+          - type: custom:mini-graph-card
+            name: "Скорость Интернета"
+            height: 75
+            hour24: true
+            show:
+              icon: false
+              extrema: true
+              fill: false
+            entities:
+              - entity: sensor.speedtest_download
+                name: "Приём"
+              - entity: sensor.speedtest_upload
+                name: "Отправка"
+
+      - !include dev_card.yaml

@@ -1,0 +1,222 @@
+title: "Weather"
+icon: mdi:umbrella
+panel: true
+path: weather
+cards:
+  - type: custom:layout-card
+    layout: vertical
+    max_columns: 3
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                name: "По ощущениям"
+                entities:
+                  - sensor.gismeteo_temperature_feels_like
+                color_thresholds:
+                  - value: -35
+                    color: "#0000FF"
+                  - value: -24
+                    color: "#0080FF"
+                  - value: 24
+                    color: "#FF8000"
+                  - value: 35
+                    color: "#FF0000"
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                name: "Темп. воды"
+                entities:
+                  - sensor.gismeteo_water_temperature
+                color_thresholds:
+                  - value: 0
+                    color: "#CCE5FF"
+                  - value: 15
+                    color: "#0080FF"
+                  - value: 19
+                    color: "#FF9932"
+                  - value: 25
+                    color: "#FF8000"
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.narodmon_temperature
+                color_thresholds:
+                  - value: -35
+                    color: "#0000FF"
+                  - value: -24
+                    color: "#0080FF"
+                  - value: 24
+                    color: "#FF8000"
+                  - value: 35
+                    color: "#FF0000"
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.narodmon_humidity
+              - type: custom:mini-graph-card
+                hour24: true
+                height: 75
+                decimals: 0
+                entities:
+                  - sensor.narodmon_pressure
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.gismeteo_temperature
+                color_thresholds:
+                  - value: -35
+                    color: "#0000FF"
+                  - value: -24
+                    color: "#0080FF"
+                  - value: 24
+                    color: "#FF8000"
+                  - value: 35
+                    color: "#FF0000"
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.gismeteo_humidity
+              - type: custom:mini-graph-card
+                hour24: true
+                height: 75
+                decimals: 0
+                entities:
+                  - sensor.gismeteo_pressure_mmhg
+
+#          - type: horizontal-stack
+#            cards:
+#              - type: custom:mini-graph-card
+#                height: 75
+#                hour24: true
+#                entities:
+#                  - sensor.outdoor_temperature
+#                # color_thresholds:
+#                #   - value: 0
+#                #     color: "#CCE5FF"
+#                #   - value: 10
+#                #     color: "#66B2FF"
+#                #   - value: 18
+#                #     color: "#0080FF"
+#                #   - value: 20
+#                #     color: "#87c087"
+#                #   - value: 21
+#                #     color: "#389638"
+#                #   - value: 24
+#                #     color: "#FF9932"
+#                #   - value: 25
+#                #     color: "#FF8000"
+#                #   - value: 26
+#                #     color: "#ff0000"
+#              - type: custom:mini-graph-card
+#                height: 75
+#                hour24: true
+#                entities:
+#                  - sensor.outdoor_humidity
+#              - type: custom:mini-graph-card
+#                hour24: true
+#                height: 75
+#                decimals: 0
+#                entities:
+#                  - sensor.pressure_mmhg
+
+          - !include cards/weather_windy.yaml
+
+          - type: vertical-stack
+            cards:
+              - type: custom:weather-card-chart
+                entity: weather.gismeteo
+                mode: hourly
+                chart_only: true
+              - type: custom:weather-card-chart
+                entity: weather.gismeteo_daily
+                mode: daily
+                chart_only: true
+              - type: picture
+                image: https://www.foreca.ru/meteogram.php?loc_id=100819827&lang=ru
+
+      - break
+      - type: history-graph
+        title: "Температура за 48ч"
+        hours_to_show: 48
+        entities:
+          - entity: sensor.narodmon_temperature
+            name: "NarodMon"
+          - entity: sensor.outdoor_temperature
+            name: "Улица"
+          - entity: sensor.gismeteo_temperature
+            name: "Gismeteo"
+          - entity: sensor.average_temperature
+            name: "В среднем"
+      - type: history-graph
+        title: "Температура за 7 дней"
+        hours_to_show: 168
+        entities:
+          - entity: sensor.narodmon_temperature
+            name: "NarodMon"
+          - entity: sensor.outdoor_temperature
+            name: "Улица"
+          - entity: sensor.gismeteo_temperature
+            name: "Gismeteo"
+          - entity: sensor.average_temperature
+            name: "В среднем"
+
+      - break
+      - type: history-graph
+        title: "Влажность за 48ч"
+        hours_to_show: 48
+        entities:
+          - entity: sensor.narodmon_humidity
+            name: "NarodMon"
+          - entity: sensor.outdoor_humidity
+            name: "Улица"
+          - entity: sensor.gismeteo_humidity
+            name: "Gismeteo"
+      - type: history-graph
+        title: "Влажность за 7 дней"
+        hours_to_show: 168
+        entities:
+          - entity: sensor.narodmon_humidity
+            name: "NarodMon"
+          - entity: sensor.outdoor_humidity
+            name: "Улица"
+          - entity: sensor.gismeteo_humidity
+            name: "Gismeteo"
+
+      - break
+      - type: history-graph
+        title: "Давление за 48ч"
+        hours_to_show: 48
+        entities:
+          - entity: sensor.narodmon_pressure
+            name: "NarodMon"
+          - entity: sensor.pressure_mmhg
+            name: "Улица"
+          - entity: sensor.gismeteo_pressure_mmhg
+            name: "Gismeteo"
+      - type: history-graph
+        title: "Давление за 7 дней"
+        hours_to_show: 168
+        entities:
+          - entity: sensor.narodmon_pressure
+            name: "NarodMon"
+          - entity: sensor.pressure_mmhg
+            name: "Улица"
+          - entity: sensor.gismeteo_pressure_mmhg
+            name: "Gismeteo"
+
+      - !include dev_card.yaml

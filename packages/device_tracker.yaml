@@ -1,0 +1,51 @@
+device_tracker:
+  # Classical method
+  - platform: nmap_tracker
+    interval_seconds: 30
+    consider_home: 180
+    hosts: !secret nmap_tracker_hosts
+    scan_options: "-sn -T5 -n"
+    home_interval: 3
+    new_device_defaults:
+      track_new_devices: true
+    exclude:
+      - !secret hass_host_ip
+
+  # Modern and more accurate method but need install of custom component
+  - platform: arpscan_tracker
+    interval_seconds: 15
+    consider_home: 180
+    scan_options: "--interface=eth0 -l -g -t1 -q"
+    exclude:
+      - !secret hass_host_ip
+
+  # Most accurate method but need some config changes on router.
+  # Also it can scan many subnets.
+  - platform: snmp
+    # Set net.link.ether.inet.max_age=180 (ARP timeout)
+    # On OPNsense: System > Settins > Tunables
+    #   and install os-net-snmp plugin
+    interval_seconds: 12
+    consider_home: 60
+    host: !secret gateway_host_ip
+    community: public
+    baseoid: 1.3.6.1.2.1.4.22.1.2
+
+  #- platform: google_maps
+  #  username: !secret google_location_username
+  #  password: !secret google_location_password
+  #  max_gps_accuracy: 150
+
+
+
+automation:
+  - alias: '[System] New Device Tracked'
+    initial_state: on
+    trigger:
+      platform: event
+      event_type: device_tracker_new_device
+    action:
+      - service: notify.hass_info
+        data_template:
+          title: "New Device Tracked"
+          message: "{{trigger.event.data.host_name}} ({{trigger.event.data.mac}})"

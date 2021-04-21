@@ -1,0 +1,187 @@
+title: "Home info"
+icon: mdi:home-heart
+panel: true
+path: home-info
+cards:
+  - type: custom:layout-card
+    layout: vertical
+    max_columns: 3
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
+                name: "Ванная"
+                hour24: true
+                height: 75
+                entities:
+                  - sensor.bathroom_temperature
+                color_thresholds:
+                  - value: 0
+                    color: "#CCE5FF"
+                  - value: 10
+                    color: "#66B2FF"
+                  - value: 18
+                    color: "#0080FF"
+                  - value: 20
+                    color: "#87c087"
+                  - value: 21
+                    color: "#389638"
+                  - value: 24
+                    color: "#FF9932"
+                  - value: 25
+                    color: "#FF8000"
+                  - value: 26
+                    color: "#ff0000"
+              - type: custom:mini-graph-card
+                name: "Ванная"
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.bathroom_humidity
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.bathroom_iaq_index
+
+          - type: horizontal-stack
+            cards:
+              - !include empty_card.yaml
+              - type: custom:mini-graph-card
+                name: "Спальня"
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.bedroom_humidity
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.bedroom_iaq_index
+
+      - break
+      - type: vertical-stack
+        cards:
+          # - type: alarm-panel
+          #   entity: alarm_control_panel.house
+          #   states:
+          #     - arm_home
+          #     - arm_away
+          #     - arm_night
+
+          - type: glance
+            show_header_toggle: false
+            column_width: calc(100% / 3)
+            entities:
+              - input_boolean.cleaning_day
+              - input_boolean.guest_mode
+              - entity: input_boolean.vacation_mode
+                name: "Отпуск"
+
+          - type: entities
+            entities:
+              - input_select.day_mode
+              - type: custom:fold-entity-row
+                head: binary_sensor.presence
+                group_config:
+                  secondary_info: last-changed
+                items:
+                  - entity: person.limych
+                    secondary_info: last-changed
+                  - entity: binary_sensor.limych_ahphoneb
+                    secondary_info: last-changed
+                  - entity: device_tracker.limych_ahphoneb_gps
+                    secondary_info: last-changed
+                  - entity: device_tracker.limych_ahtabletl_gps
+                    secondary_info: last-changed
+                  # - entity: proximity.home_limych
+                  #   name: "Близость к дому"
+                  # - entity: proximity.home_limych
+                  #   type: custom:state-attribute-element
+                  #   attribute: dir_of_travel
+                  #   prefix: "Направление движения: "
+
+                  - type: divider
+
+                  # - entity: sensor.unlocked_by
+                  #   name: "Front door last unlocked by"
+                  #   secondary_info: last-changed
+                  - entity: sensor.monitor_hallway
+                    secondary_info: last-changed
+                  - entity: sensor.monitor_bedroom
+                    secondary_info: last-changed
+
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: glance
+              title: "Движение"
+              show_header_toggle: false
+              columns: 4
+            filter:
+              include:
+                - entity_id: "binary_sensor.*_motion"
+                - entity_id: "binary_sensor.*_occupancy"
+              exclude:
+                - entity_id: "binary_sensor.front_door_motion"
+                - entity_id: "binary_sensor.wallpanel_*"
+                - entity_id: "*_1_*"
+                - entity_id: "*_2_*"
+            sort: entity_id
+
+      - break
+      - type: history-graph
+        title: "Температура за 48ч"
+        hours_to_show: 48
+        entities:
+          - sensor.bathroom_temperature
+          - sensor.bedroom_temperature
+      - type: history-graph
+        title: "Температура за 7 дней"
+        hours_to_show: 168
+        entities:
+          - sensor.bathroom_temperature
+          - sensor.bedroom_temperature
+
+      - break
+      - type: history-graph
+        title: "Влажность за 48ч"
+        hours_to_show: 48
+        entities:
+          - sensor.bathroom_humidity
+          - sensor.bedroom_humidity
+      - type: history-graph
+        title: "Влажность за 7 дней"
+        hours_to_show: 168
+        entities:
+          - sensor.bathroom_humidity
+          - sensor.bedroom_humidity
+
+      - break
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: history-graph
+          title: "ЛОВ за 48ч"
+          hours_to_show: 48
+        filter:
+          include:
+            - entity_id: "sensor.*_tvoc"
+        sort: name
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: history-graph
+          title: "ЛОВ за 7 дней"
+          hours_to_show: 168
+        filter:
+          include:
+            - entity_id: "sensor.*_tvoc"
+        sort: name
+
+      - !include dev_card.yaml

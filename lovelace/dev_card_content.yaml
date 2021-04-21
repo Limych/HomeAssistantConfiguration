@@ -1,0 +1,60 @@
+type: vertical-stack
+cards:
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        entity: input_boolean.maintenance_mode
+        color: rgb(117, 189, 111)
+        color_type: card
+        show_name: False
+        state:
+          - value: "off"
+            color: rgba(255, 255, 255, 0.1)
+      - type: custom:button-card
+        icon: mdi:format-list-bulleted-type
+        color: rgb(117, 189, 111)
+        color_type: card
+        show_name: False
+        tap_action:
+          action: url
+          url: !secret logs_viewer_url
+      - type: custom:button-card
+        icon: mdi:clipboard-check-outline
+        color: rgb(223, 255, 97)
+        color_type: card
+        show_name: False
+        tap_action:
+          action: call-service
+          service: homeassistant.check_config
+      - type: custom:button-card
+        icon: mdi:reload
+        color: rgb(255, 97, 97)
+        color_type: card
+        show_name: False
+        tap_action:
+          action: call-service
+          service: homeassistant.restart
+  - type: entities
+    show_header_toggle: false
+    entities:
+     - input_text.git_commit_message
+  - type: horizontal-stack
+    cards:
+      - type: custom:button-card
+        icon: mdi:github
+        name: "Repo"
+        color: rgb(117, 189, 111)
+        color_type: card
+        layout: icon_name
+        tap_action:
+          action: url
+          url: https://github.com/Limych/HomeAssistantConfiguration
+      - type: custom:button-card
+        icon: mdi:arrow-top-right
+        name: "Commit"
+        color: rgb(117, 189, 111)
+        color_type: card
+        layout: icon_name
+        tap_action:
+          action: call-service
+          service: shell_command.git_commit

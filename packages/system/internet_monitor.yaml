@@ -1,0 +1,27 @@
+homeassistant:
+  customize:
+    binary_sensor.internet:
+      friendly_name: "Интернет"
+      templates:
+        hs_color: >
+          if (state === 'on') return [0, 0];
+          else if (state === 'off') return [0, 85];
+          else return [40, 70];
+
+
+sensor:
+  - platform: dnsip
+
+
+binary_sensor:
+  - platform: ping
+    name: internet
+    host: yandex.ru
+    scan_interval: 10
+    count: 3
+
+
+speedtestdotnet:
+  scan_interval:
+    hours: 3
+

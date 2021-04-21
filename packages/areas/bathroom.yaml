@@ -1,0 +1,13 @@
+homeassistant:
+  customize_glob:
+    sensor.bathroom_*:
+      friendly_name: "Ванная"
+    binary_sensor.bathroom_*:
+      friendly_name: "Ванная"
+
+
+iaquk:
+  bathroom:
+    sources:
+      temperature: sensor.bathroom_temperature
+      humidity: sensor.bathroom_humidity

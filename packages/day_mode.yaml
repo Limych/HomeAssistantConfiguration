@@ -1,0 +1,146 @@
+homeassistant:
+  customize:
+    input_select.day_mode:
+      templates:
+        icon: >-
+          if state == 'Ночь' or state == 'Вечер' return 'mdi:weather-night';
+          return 'mdi:white-balance-sunny';
+
+
+input_select:
+  day_mode:
+    name: "Режим дня"
+    icon: mdi:white-balance-sunny
+    options:
+     - "Утро"
+     - "День"
+     - "Вечер"
+     - "Ночь"
+
+
+binary_sensor:
+  - platform: workday
+    country: RU
+
+  - platform: template
+    sensors:
+      is_day:
+        value_template: >-
+          {{ states('input_select.day_mode') != "Ночь" }}
+
+
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'
+      - 'date'
+      - 'date_time'
+      # - 'time_date'
+      # - 'time_utc'
+  - platform: template
+    sensors:
+      date_day:
+        value_template: >-
+          {%- set dummy = states("sensor.date") %}
+          {%- set months = ["янв", "фев", "мар", "апр", "мая", "июн", "июл", "авг", "сен", "окт", "ноя", "дек"] %}
+          {%- set wdays = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]  %}
+          {{ wdays[now().weekday()] + ', ' + now().strftime('%d') + ' ' + months[now().month-1] }}
+
+
+automation:
+  ###################################
+  ##  Set to morning               ##
+  ###################################
+  - alias: '[House] Day Mode To Morning'
+    initial_state: on
+    trigger:
+      # Just before sunrise
+      - platform: sun
+        event: sunrise
+        offset: '-00:30:00'
+      - platform: time
+        at: '04:59:00'
+      # or at 08:00
+      - platform: time
+        at: '08:00:00'
+    condition:
+      condition: or
+      conditions:
+        # Only during daylight hours
+        - condition: sun
+          after: sunrise
+          after_offset: '-00:30:00'
+        # Or has to be between 05 and 11
+        - condition: time
+          after: '05:00:00'
+          before: '11:00:00'
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.day_mode
+          option: "Утро"
+
+  ###################################
+  ##  Set to day                   ##
+  ###################################
+  - alias: '[House] Day Mode To Day'
+    initial_state: on
+    trigger:
+      - platform: time
+        at: '12:00:00'
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.day_mode
+          option: "День"
+
+  ###################################
+  ##  Set to evening               ##
+  ###################################
+  - alias: '[House] Day Mode To Evening'
+    initial_state: on
+    trigger:
+      # Just before sunset
+      - platform: sun
+        event: sunset
+        offset: '-00:30:00'
+      # Or at 18:00
+      - platform: time
+        at: '18:00:00'
+    condition:
+      - condition: state
+        entity_id: input_select.day_mode
+        state: "День"
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.day_mode
+          option: "Вечер"
+
+  ###################################
+  ##  Set to night                 ##
+  ###################################
+  - alias: '[House] Day Mode To Night'
+    initial_state: on
+    trigger:
+      # When all owners goes to sleep
+      - platform: state
+        entity_id: group.sleeping_owners_all
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: input_select.day_mode
+        state: "Вечер"
+    action:
+      - service: input_select.select_option
+        data:
+          entity_id: input_select.day_mode
+          option: "Ночь"
+      ## Stop here if no owners at home
+      # - condition: state
+      #   entity_id: binary_sensor.presence_owners
+      #   state: 'on'
+      # - service: notify.all
+      #   data:
+      #     title: 'Сладких снов!'
+      #     message: 'Похоже, все легли спать…'

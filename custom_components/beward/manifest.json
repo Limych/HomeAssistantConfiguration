@@ -1,0 +1,13 @@
+{
+    "codeowners": [
+        "@Limych"
+    ],
+    "config_flow": false,
+    "dependencies": [],
+    "documentation": "https://github.com/Limych/ha-beward",
+    "domain": "beward",
+    "name": "Beward",
+    "requirements": [
+        "beward~=1.0"
+    ]
+}

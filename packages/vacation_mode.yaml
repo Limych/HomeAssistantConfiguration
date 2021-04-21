@@ -1,0 +1,38 @@
+input_boolean:
+  vacation_mode:
+    name: "Режим Отпуска"
+    icon: mdi:beach
+
+
+automation:
+  - alias: '[House] Vacation Mode Notify'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: input_boolean.vacation_mode
+    action:
+      - service: notify.limych
+        data_template:
+          message: "Режим Отпуска переключен в {{ trigger.to_state.state | upper }}"
+
+  - alias: '[House] Vacation Mode On'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_owners
+        to: 'off'
+        for:
+          hours: 24
+    action:
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.vacation_mode
+
+  - alias: '[House] Vacation Mode Off'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.presence_owners
+        to: 'on'
+    action:
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.vacation_mode

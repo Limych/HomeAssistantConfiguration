@@ -1,0 +1,81 @@
+---
+name: Home Assistant CI
+
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: 0 2 * * *
+
+jobs:
+  # YAML Lint
+  yamllint:
+    name: YAML Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out configuration from GitHub
+        uses: actions/checkout@v2
+      - name: Run yamllint
+        uses: frenck/action-yamllint@v1
+
+  #Remark Lint
+  remarklint:
+    name: Remark Lint
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out configuration from GitHub
+        uses: actions/checkout@v2
+      - name: Running Remark lint
+        uses: "docker://pipelinecomponents/remark-lint:latest"
+        continue-on-error: true
+        with:
+          args: "remark --no-stdout --color --frail --use preset-lint-recommended ."
+
+  #Home Assistant - Config check
+  home_assistant:
+    name: "Home Assistant Core ${{ matrix.version }} Configuration Check"
+    runs-on: ubuntu-latest
+    needs: [yamllint, remarklint]
+    strategy:
+      fail-fast: false
+      matrix:
+        version: ["stable", "beta", "dev"]
+    steps:
+      - name: Check out configuration from GitHub
+        uses: actions/checkout@v2
+      - name: Create dummy files
+        run: |
+          touch ./home-assistant.log
+#  - perl -i -pe 'if (/whitelist_external_dirs:/) { $_ = <>; $_ = <> while /^\s*-/; }' configuration.yaml
+#  - sed -i 's|use_x_forwarded_for:.*||g; s|trusted_proxies:.*||g' configuration.yaml
+#  # - perl -i -pe 'while (/- platform: rpi_gpio/) { $_ = <>; $_ = <> while !/^\s*-/ && !eof(); }' packages/areas/hallway.yaml
+#  - rm packages/areas/hallway.yaml
+      - name: Run Home Assistant Configuration Check
+        uses: frenck/action-home-assistant@v1
+        with:
+          secrets: ./tests/fake_secrets.yaml
+          version: "${{ matrix.version }}"
+
+  esphome:
+    name: "ESPHome check"
+    runs-on: ubuntu-latest
+    needs: [yamllint]
+    steps:
+      - name: Check out configuration from GitHub
+        uses: actions/checkout@v1
+      - name: Set up Python 3.8
+        uses: actions/setup-python@v2.2.2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip setuptools wheel
+          pip install esphome
+          pip list
+          esphome version
+      - name: Copy stub files into configuration folder
+        run: cp -R ./tests/fake_secrets.yaml ./esphome/secrets.yaml
+      - name: Run esphome on all files
+        # yamllint disable rule:line-length
+        run: |
+          for file in $(find ./esphome -type f -name "*.yaml" -not -name "secrets.yaml"); do esphome "${file}" config; done

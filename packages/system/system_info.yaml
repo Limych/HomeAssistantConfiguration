@@ -1,0 +1,152 @@
+homeassistant:
+  customize_glob:
+    sensor.system_*:
+      icon: mdi:server-network
+      templates:
+        hs_color: >-
+          if (state === 'Online') return [0, 0];
+          else if (state === 'Offline') return [0, 85];
+          else return [40, 70];
+    sensor.system_security_*:
+      icon: mdi:security
+    sensor.system_media_*:
+      icon: mdi:speaker
+    sensor.connection_lan_switch*:
+      icon: mdi:lan
+    sensor.system_media_*_tv:
+      icon: mdi:television
+
+  customize:
+    sensor.connection_internet:
+      icon: mdi:wan
+    sensor.system_uplink:
+      icon: mdi:wan
+    sensor.system_gateway:
+      icon: mdi:server
+    sensor.system_nas:
+      icon: mdi:nas
+    sensor.connection_wifi_ap:
+      icon: mdi:access-point
+    sensor.connection_lan_router:
+      icon: mdi:router-wireless
+    sensor.system_server_media:
+      icon: mdi:plex
+    sensor.system_server_repo:
+      icon: mdi:git
+    sensor.system_server_syncthing:
+      icon: mdi:cloud-sync
+    #
+    sensor.system_security_intercom:
+      icon: mdi:cctv
+    #
+    input_boolean.test:
+      icon: mdi:test-tube
+
+
+input_boolean:
+  test:
+    name: "Test stuff"
+    initial: off
+
+
+sensor:
+  - platform: template
+    sensors:
+      connection_internet:
+        friendly_name: "Интернет"
+        value_template: >-
+          {{ 'Online' if is_state('binary_sensor.internet', 'on') else 'Offline' }}
+      connection_wifi_ap:
+        friendly_name: "WiFi точка доступа"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.lan_wifi_ap', 'home') else 'Offline' }}
+      connection_lan_router:
+        friendly_name: "OpenWRT роутер"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.lan_router', 'home') else 'Offline' }}
+      connection_lan_switch5:
+        friendly_name: "LAN Switch 5"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.lan_switch5', 'home') else 'Offline' }}
+      connection_lan_switch8:
+        friendly_name: "LAN Switch 8"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.lan_switch8', 'home') else 'Offline' }}
+
+      # system_uplink:
+      #   friendly_name: "Uplink"
+      #   value_template: >-
+      #     {{ 'Online' if is_state('device_tracker.uplink', 'home') else 'Offline' }}
+      system_gateway:
+        friendly_name: "Gateway"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_gate_lan', 'home') else 'Offline' }}
+      system_nas:
+        friendly_name: "NAS"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_nas', 'home') else 'Offline' }}
+
+      system_server_media:
+        friendly_name: "Media Server"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_media', 'home') else 'Offline' }}
+      system_server_repo:
+        friendly_name: "GIT Repository"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_repo', 'home') else 'Offline' }}
+      system_server_syncthing:
+        friendly_name: "Syncthing"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_syncthing', 'home') else 'Offline' }}
+
+      system_security_intercom:
+        friendly_name: "Домофон"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.security_intercom', 'home') else 'Offline' }}
+
+      system_media_kitchen:
+        friendly_name: "Колонки на Кухне"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.media_kitchen', 'home') else 'Offline' }}
+      system_media_living_room:
+        friendly_name: "Колонки В Гостиной"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.media_living_room', 'home') else 'Offline' }}
+      system_media_bedroom_tv:
+        friendly_name: "Телевизор в Спальне"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.media_bedroom_tv', 'home') else 'Offline' }}
+
+
+automation:
+  - alias: '[System] Device Status'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id:
+          - sensor.connection_internet
+          - sensor.system_gateway
+          - sensor.system_nas
+          - sensor.connection_wifi_ap
+          - sensor.connection_lan_router5
+          - sensor.connection_lan_router8
+          - sensor.system_server_media
+          - sensor.system_server_repo
+          - sensor.system_server_syncthing
+          - sensor.system_security_intercom
+          # - sensor.system_security_wallpanel
+        to: 'Offline'
+        for:
+          minutes: 5
+      - platform: state
+        entity_id:
+          - sensor.monitor_hallway
+          - sensor.monitor_bedroom
+        to: 'offline'
+        for:
+          minutes: 5
+    action:
+      - service: notify.hass_info
+        data_template:
+          title: 'Device {{ trigger.to_state.name }} is'
+          message: '"{{ trigger.to_state.state }}"'

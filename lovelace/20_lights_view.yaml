@@ -1,0 +1,95 @@
+title: "Lights"
+icon: mdi:lightbulb
+panel: true
+path: lights
+cards:
+  - type: custom:layout-card
+    layout: vertical
+    max_columns: 3
+    cards:
+      - type: vertical-stack
+        cards:
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: glance
+              title: "Движение"
+              show_header_toggle: false
+              columns: 4
+            filter:
+              include:
+                - entity_id: "binary_sensor.*_motion"
+                - entity_id: "binary_sensor.*_occupancy"
+              exclude:
+                - entity_id: "binary_sensor.front_door_motion"
+                - entity_id: "binary_sensor.wallpanel_*"
+                - entity_id: "*_1_*"
+                - entity_id: "*_2_*"
+            sort: name
+
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: glance
+              title: "Освещённость"
+              show_header_toggle: false
+              columns: 4
+            filter:
+              include:
+                - entity_id: "sensor.*_illuminance"
+              exclude:
+                - entity_id: "*_1_*"
+                - entity_id: "*_2_*"
+                - entity_id: "*.narodmon_*"
+            sort: name
+
+      - break
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: entities
+          title: "Светильники"
+          show_header_toggle: true
+        filter:
+          include:
+            - domain: light
+              options:
+                secondary_info: brightness
+        sort: name
+
+      - break
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: history-graph
+          title: "Освещённость за 48ч"
+          hours_to_show: 48
+        sort: name
+        filter:
+          include:
+            - entity_id: "sensor.*_illuminance"
+          exclude:
+            - entity_id: "*_1_*"
+            - entity_id: "*_2_*"
+            - entity_id: "*.narodmon_*"
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: history-graph
+          title: "Освещённость за 7 дней"
+          hours_to_show: 168
+        sort: name
+        filter:
+          include:
+            - entity_id: "sensor.*_illuminance"
+          exclude:
+            - entity_id: "*_1_*"
+            - entity_id: "*_2_*"
+            - entity_id: "*.narodmon_*"
+
+      - !include dev_card.yaml

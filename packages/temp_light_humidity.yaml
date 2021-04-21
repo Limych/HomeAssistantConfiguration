@@ -1,0 +1,8 @@
+
+binary_sensor:
+  - platform: template
+    sensors:
+      dark_outside:
+        friendly_name: "Темно на улице"
+        value_template: >-
+          {{ is_state('sun.sun', 'below_horizon') }}

@@ -1,0 +1,98 @@
+# homeassistant:
+#   customize_glob:
+#     sensor.*_energy_consumption*:
+#       unit_of_measurement: 'kWh'
+#       icon: mdi:counter
+
+
+# sensor:
+#   - platform: template
+#     sensors:
+#       total_energy_consumption:
+#         friendly_name: "Общее потребление энергии"
+#         value_template: >-
+#           {% if states('sensor.servers_plug_energy')
+#               and states('sensor.washer_plug_energy') %}
+#             {{ (
+#               (states.sensor.servers_plug_energy.state | float)
+#               + (states.sensor.washer_plug_energy.state | float)
+#             ) | round(2) }}
+#           {% else %}Unavailable{% endif %}
+#       daily_energy_consumption:
+#         friendly_name: "Дневное потребление энергии"
+#         value_template: >-
+#           {{ (
+#             (states.sensor.daily_energy_consumption_t1_peak.state | float)
+#             + (states.sensor.daily_energy_consumption_t2_offpeak.state | float)
+#             + (states.sensor.daily_energy_consumption_t3_partialpeak.state | float)
+#           ) | round(2) }}
+#       monthly_energy_consumption:
+#         friendly_name: "Месячное потребление энергии"
+#         value_template: >-
+#           {{ (
+#             (states.sensor.monthly_energy_consumption_t1_peak.state | float)
+#             + (states.sensor.monthly_energy_consumption_t2_offpeak.state | float)
+#             + (states.sensor.monthly_energy_consumption_t3_partialpeak.state | float)
+#           ) | round(2) }}
+
+        
+# utility_meter:
+#   daily_energy_consumption:
+#     source: sensor.total_energy_consumption
+#     cycle: daily 
+#     tariffs:
+#       - 'T1-peak'
+#       - 'T3-partialpeak'
+#       - 'T2-offpeak'
+#   monthly_energy_consumption:
+#     source: sensor.total_energy_consumption
+#     cycle: monthly
+#     tariffs:
+#       - 'T1-peak'
+#       - 'T3-partialpeak'
+#       - 'T2-offpeak'
+
+
+# automation:  
+#   - alias: "[House] Change Utility Tariffs to T1-peak"
+#     initial_state: on
+#     trigger:
+#       - platform: time
+#         at: '07:00:00'
+#       - platform: time
+#         at: '17:00:00'
+#     action:
+#       - service: utility_meter.select_tariff
+#         data:
+#           entity_id:
+#             - utility_meter.daily_energ
+#             - utility_meter.monthly_energy
+#           tariff: 'T1-peak'
+
+#   - alias: "[House] Change Utility Tariffs to T2-offpeak"
+#     initial_state: on
+#     trigger:
+#       - platform: time
+#         at: '23:00:00'
+#     action:
+#       - service: utility_meter.select_tariff
+#         data:
+#           entity_id:
+#             - utility_meter.daily_energ
+#             - utility_meter.monthly_energy
+#           tariff: 'T2-offpeak'
+
+#   - alias: "[House] Change Utility Tariffs to T3-partialpeak"
+#     initial_state: on
+#     trigger:
+#       - platform: time
+#         at: '10:00:00'
+#       - platform: time
+#         at: '21:00:00'
+#     action:
+#       - service: utility_meter.select_tariff
+#         data:
+#           entity_id:
+#             - utility_meter.daily_energ
+#             - utility_meter.monthly_energy
+#           tariff: 'T3-partialpeak'

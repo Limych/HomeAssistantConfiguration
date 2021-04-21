@@ -1,0 +1,14 @@
+shelly:
+  devices:      #devices to be added
+    - id: "7A3507"
+      name: "Washer Shelly Plug"
+      entity_id: washer_plug
+    - id: "7ADF96"
+      name: "Server Shelly Plug"
+      entity_id: server_plug
+    - id: "040926"
+      name: "Kitchen Fan Shelly Plug"
+      entity_id: kitchen_fan_plug
+    - id: "691FEA-1"
+      name: "Kitchen Tabletop Light"
+      light_switch: true

@@ -1,0 +1,10 @@
+type: conditional
+conditions:
+  - entity: input_boolean.maintenance_mode
+    state: "on"
+card:
+  type: vertical-stack
+  cards:
+    - type: picture
+      image: /local/lovelace/bg_maintenance.png
+    - !include dev_card_content.yaml

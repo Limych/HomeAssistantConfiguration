@@ -1,0 +1,40 @@
+homeassistant:
+  customize:
+    camera.intercom:
+      friendly_name: "Входная дверь"
+    binary_sensor.front_door_motion:
+      friendly_name: "Перед входной дверью"
+
+
+beward:
+  - host: !secret camera_doorbell_host
+    username: !secret camera_doorbell_login
+    password: !secret camera_doorbell_password
+    name: "Front door"
+    stream: 1
+    binary_sensors:
+      - online
+      - motion
+      - ding
+    sensors:
+      - last_activity
+      - last_motion
+      - last_ding
+
+
+automation:
+  - alias: "[Security] Front door Ding"
+    initial_state: on
+    trigger:
+      platform: state
+      entity_id: binary_sensor.front_door_ding
+      to: 'on'
+    action:
+      - delay: 2
+      - service: notify.limych
+        data:
+          message: "Звонят в дверь!"
+          data:
+            photo:
+              file: /config/.storage/beward/front_door_last_ding.jpg
+              caption: "Звонят в дверь!"
