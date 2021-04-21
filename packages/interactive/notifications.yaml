@@ -1,3 +1,4 @@
+---
 #
 # This package contains the components I use to notify, and be
 # notified by, homeassistant and an engine that translates the
@@ -155,3 +156,4 @@ notify:
 #            {% else %}
 #              {{ now().strftime('%H:%M') }} - {{ message|replace('\n','-')|replace('   ',' ')|replace('  ',' ') }}
 #            {% endif %}
+

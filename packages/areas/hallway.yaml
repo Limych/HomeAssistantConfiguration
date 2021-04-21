@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     binary_sensor.front_door:
@@ -17,3 +18,4 @@ binary_sensor:
     invert_logic: true
     ports:
       24: "Front Door"
+

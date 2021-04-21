@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     input_select.day_mode:
@@ -144,3 +145,4 @@ automation:
       #   data:
       #     title: 'Сладких снов!'
       #     message: 'Похоже, все легли спать…'
+

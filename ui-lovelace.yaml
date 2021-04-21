@@ -1,3 +1,4 @@
+---
 custom_header:
   compact_mode: true
 title: Home
@@ -27,3 +28,4 @@ views:
 
   - !include lovelace/90_settings_view.yaml
   - !include lovelace/99_test_view.yaml
+

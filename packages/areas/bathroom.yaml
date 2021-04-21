@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize_glob:
     sensor.bathroom_*:
@@ -11,3 +12,4 @@ iaquk:
     sources:
       temperature: sensor.bathroom_temperature
       humidity: sensor.bathroom_humidity
+

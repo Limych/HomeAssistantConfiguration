@@ -1,3 +1,4 @@
+---
 sensor:
   - platform: template
     sensors:
@@ -64,3 +65,4 @@ automation:
           sequence:
             - service: script.front_door_snapshot
             - delay: 5
+

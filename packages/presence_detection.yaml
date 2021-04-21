@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize_glob:
     device_tracker.*_bt:
@@ -146,3 +147,4 @@ automation:
       # - service: notify.all
       #   data:
       #     message: 'С добрым утром!'
+

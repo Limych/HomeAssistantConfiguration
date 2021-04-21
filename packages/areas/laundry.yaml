@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     input_select.washing_machine_status:

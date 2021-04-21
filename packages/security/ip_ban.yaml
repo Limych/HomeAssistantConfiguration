@@ -1,3 +1,4 @@
+---
 automation:
   - alias: '[Security] IP Ban Notify'
     initial_state: on
@@ -12,3 +13,4 @@ automation:
         data_template:
           title: "IP address has been banned!"
           message: "{{ trigger.state.attributes.message }}"
+

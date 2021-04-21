@@ -1,3 +1,4 @@
+---
 tts:
   - platform: google_translate
     language: 'ru'
@@ -24,3 +25,4 @@ automation:
           message: "С добрым утром!"
       - service: automation.trigger
         entity_id: automation.media_set_base_volume
+

@@ -1,3 +1,4 @@
+---
 weather:
   - platform: gismeteo
   - platform: gismeteo
@@ -32,3 +33,4 @@ sensor:
     entities:
       - sensor.gismeteo_temperature
       - sensor.narodmon_temperature
+

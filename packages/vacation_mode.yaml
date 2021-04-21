@@ -1,3 +1,4 @@
+---
 input_boolean:
   vacation_mode:
     name: "Режим Отпуска"
@@ -36,3 +37,4 @@ automation:
     action:
       - service: input_boolean.turn_off
         entity_id: input_boolean.vacation_mode
+

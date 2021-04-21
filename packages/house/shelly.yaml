@@ -1,3 +1,4 @@
+---
 shelly:
   devices:      #devices to be added
     - id: "7A3507"
@@ -12,3 +13,4 @@ shelly:
     - id: "691FEA-1"
       name: "Kitchen Tabletop Light"
       light_switch: true
+

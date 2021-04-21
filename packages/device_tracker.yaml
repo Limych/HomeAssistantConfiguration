@@ -1,3 +1,4 @@
+---
 device_tracker:
   # Classical method
   - platform: nmap_tracker
@@ -49,3 +50,4 @@ automation:
         data_template:
           title: "New Device Tracked"
           message: "{{trigger.event.data.host_name}} ({{trigger.event.data.mac}})"
+

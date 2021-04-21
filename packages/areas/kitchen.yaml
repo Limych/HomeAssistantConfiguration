@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize_glob:
     sensor.kitchen_*:
@@ -34,13 +35,11 @@ sensor:
               + states('sensor.kitchen_2_illuminance')|float ) / 2)|int }}
 
 
-# iaquk:
-#   kitchen:
-#     sources:
-#       temperature: sensor.kitchen_temperature
-#       humidity: sensor.kitchen_humidity
-#       co2: sensor.kitchen_eco2
-#       tvoc: sensor.kitchen_tvoc
+iaquk:
+  kitchen:
+    sources:
+      temperature: sensor.kitchen_temperature
+      humidity: sensor.kitchen_humidity
 
 
 automation:

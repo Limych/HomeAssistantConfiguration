@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     camera.intercom:
@@ -38,3 +39,4 @@ automation:
             photo:
               file: /config/.storage/beward/front_door_last_ding.jpg
               caption: "Звонят в дверь!"
+

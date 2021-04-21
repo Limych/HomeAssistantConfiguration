@@ -12,6 +12,43 @@ cards:
           - type: horizontal-stack
             cards:
               - type: custom:mini-graph-card
+                name: "Кухня"
+                hour24: true
+                height: 75
+                entities:
+                  - sensor.kitchen_temperature
+                color_thresholds:
+                  - value: 0
+                    color: "#CCE5FF"
+                  - value: 10
+                    color: "#66B2FF"
+                  - value: 18
+                    color: "#0080FF"
+                  - value: 20
+                    color: "#87c087"
+                  - value: 21
+                    color: "#389638"
+                  - value: 24
+                    color: "#FF9932"
+                  - value: 25
+                    color: "#FF8000"
+                  - value: 26
+                    color: "#ff0000"
+              - type: custom:mini-graph-card
+                name: "Кухня"
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.kitchen_humidity
+              - type: custom:mini-graph-card
+                height: 75
+                hour24: true
+                entities:
+                  - sensor.kitchen_iaq_index
+
+          - type: horizontal-stack
+            cards:
+              - type: custom:mini-graph-card
                 name: "Ванная"
                 hour24: true
                 height: 75
@@ -137,28 +174,32 @@ cards:
         title: "Температура за 48ч"
         hours_to_show: 48
         entities:
-          - sensor.bathroom_temperature
+          - sensor.kitchen_temperature
           - sensor.bedroom_temperature
+          - sensor.bathroom_temperature
       - type: history-graph
         title: "Температура за 7 дней"
         hours_to_show: 168
         entities:
-          - sensor.bathroom_temperature
+          - sensor.kitchen_temperature
           - sensor.bedroom_temperature
+          - sensor.bathroom_temperature
 
       - break
       - type: history-graph
         title: "Влажность за 48ч"
         hours_to_show: 48
         entities:
-          - sensor.bathroom_humidity
+          - sensor.kitchen_humidity
           - sensor.bedroom_humidity
+          - sensor.bathroom_humidity
       - type: history-graph
         title: "Влажность за 7 дней"
         hours_to_show: 168
         entities:
-          - sensor.bathroom_humidity
+          - sensor.kitchen_humidity
           - sensor.bedroom_humidity
+          - sensor.bathroom_humidity
 
       - break
       - type: custom:auto-entities

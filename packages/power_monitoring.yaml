@@ -1,3 +1,4 @@
+---
 # homeassistant:
 #   customize_glob:
 #     sensor.*_energy_consumption*:
@@ -96,3 +97,4 @@
 #             - utility_meter.daily_energ
 #             - utility_meter.monthly_energy
 #           tariff: 'T3-partialpeak'
+

@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     sensor.cpu_temperature:
@@ -19,9 +20,6 @@ sensor:
   - platform: version
   - platform: version
     source: hassio
-  # - platform: cert_expiry
-  #   host: !secret hass_domain
-  #   port: 8123
 
   - platform: systemmonitor
     resources:
@@ -85,7 +83,7 @@ automation:
     action:
       - service: system_log.write
         data_template:
-          message: "-=-=- Hass.io Online -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+          message: "-=-=- Hass.io Online -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
           level: warning
       - service: notify.hass_info
         data:
@@ -102,7 +100,7 @@ automation:
     action:
       - service: system_log.write
         data_template:
-          message: "-=-=- Hass.io Offline -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+          message: "-=-=- Hass.io Offline -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
           level: warning
       - service: notify.hass_info
         data:

@@ -1,3 +1,4 @@
+---
 #
 # This package contains automations that respond to interactive
 # commands by actioning the request
@@ -126,3 +127,4 @@ automation:
         data_template:
           target: "{{ trigger.event.data.user_id }}"
           message: "Guest mode has been turned {{ states('input_boolean.guest_mode') }}."
+

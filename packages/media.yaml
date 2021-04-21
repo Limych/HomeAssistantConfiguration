@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     media_player.kitchen:
@@ -35,10 +36,6 @@ media_player:
         'bluetooth': 'Bluetooth',
         'line-in': 'Line-in', 
       }
-
-  # - platform: emby
-  #   host: !secret emby_host
-  #   api_key: !secret emby_apikey
 
 
 group:
@@ -80,15 +77,6 @@ automation:
   # - alias: "[Media] Stop Radio when Movie is Playing"
   #   initial_state: on
   #   trigger:
-  #     - platform: state
-  #       entity_id: media_player.emby_emby_for_android_mobile_lenovo_tbx704l
-  #       to: 'playing'
-  #     - platform: state
-  #       entity_id: media_player.emby_emby_mobile_chrome
-  #       to: 'playing'
-  #     - platform: state
-  #       entity_id: media_player.emby_emby_mobile_chrome_3
-  #       to: 'playing'
   #     - platform: state
   #       entity_id: media_player.plex_notebook
   #       to: 'playing'
@@ -219,3 +207,4 @@ automation:
   #     - service: linkplay.restore
   #       data:
   #         entity_id: group.all_speakers
+

@@ -1,6 +1,8 @@
+---
 homeassistant:
   customize_glob:
     sensor.living_room_*:
       friendly_name: "Гостиная"
     binary_sensor.living_room_*:
       friendly_name: "Гостиная"
+

@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     input_boolean.guest_mode:
@@ -22,10 +23,11 @@ automation:
     trigger:
       - platform: state
         entity_id: >-
-          device_tracker.guest_ksenia_phone, device_tracker.guest_ivanchev_phone1, device_tracker.guest_ivanchev_phone2,
-          device_tracker.guest_tolya_phone, device_tracker.guest_kent_notebook, device_tracker.guest_ivanchev_notebook,
-          device_tracker.guest_ivanchev_notebook2, device_tracker.guest_iseeyou_phone,
-          device_tracker.guest_iseeyou_laptop
+          device_tracker.guest_ivanchev_phone1, device_tracker.guest_ivanchev_phone2,
+          device_tracker.guest_ivanchev_notebook, device_tracker.guest_ivanchev_notebook2,
+          device_tracker.guest_tolya_phone,
+          device_tracker.guest_kent_notebook,
+          device_tracker.guest_iseeyou_phone, device_tracker.guest_iseeyou_laptop
         to: home
     action:
       - service: homeassistant.turn_on
@@ -63,3 +65,4 @@ automation:
           title: 'Guest mode off'
           message: >
             'Гости ушли к себе…'
+

@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize_glob:
     sensor.bedroom_*:
@@ -22,3 +23,4 @@ iaquk:
       tvoc: sensor.bedroom_tvoc
       hcho: sensor.bedroom_hcho
       pm: sensor.bedroom_pm25
+

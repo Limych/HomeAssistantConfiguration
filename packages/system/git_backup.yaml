@@ -1,3 +1,4 @@
+---
 input_text:
   git_commit_message:
     name: "Commit Message"
@@ -32,3 +33,4 @@ shell_command:
   #     minutes: '/10'
   #   action:
   #     service: shell_command.git_auto_fetch
+

@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize:
     sensor.system_security_wallpanel:
@@ -105,3 +106,4 @@ automation:
         data:
           topic: "wallpanel/mywallpanel/command"
           payload: '{"audio": "https://hassio.lan:8123/local/lovelace/doorbell-ring.mp3"}'
+

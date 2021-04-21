@@ -1,3 +1,4 @@
+---
 homeassistant:
   customize_glob:
     sensor.*battery*:
@@ -14,3 +15,4 @@ homeassistant:
           if (state === 'Online') return [0, 0];
           else if (state === 'Offline') return [0, 85];
           else return [40, 70];
+
