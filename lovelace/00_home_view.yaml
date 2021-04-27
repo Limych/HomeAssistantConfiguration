@@ -4,8 +4,9 @@ panel: true
 path: home
 cards:
   - type: custom:layout-card
-    layout: horizontal
-    max_columns: 3
+    layout_type: custom:horizontal-layout
+    layout:
+      max_cols: 3
     cards:
       - type: horizontal-stack
         cards:

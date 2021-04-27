@@ -57,7 +57,6 @@ mobile_app:
 ssdp:
 system_health:
 updater:
-  reporting: false  # Switch off Google Analytics
 zeroconf:
 #  sensors: false
 
@@ -108,7 +107,7 @@ lovelace:
     - url: /hacsfiles/flex-horseshoe-card/flex-horseshoe-card.js
       type: module
     - url: /hacsfiles/lovelace-fold-entity-row/fold-entity-row.js
-      type: js
+      type: module
     - url: /hacsfiles/lovelace-layout-card/layout-card.js
       type: module
     - url: /hacsfiles/lovelace-card-preloader/lovelace-card-preloader.js
@@ -120,6 +119,8 @@ lovelace:
     - url: /hacsfiles/mini-graph-card/mini-graph-card-bundle.js
       type: module
     - url: /hacsfiles/mini-media-player/mini-media-player-bundle.js
+      type: module
+    - url: /hacsfiles/lovelace-multiple-entity-row/multiple-entity-row.js
       type: module
     - url: /local/custom-lovelace/popup-card.js
       type: js

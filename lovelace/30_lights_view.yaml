@@ -4,8 +4,9 @@ panel: true
 path: lights
 cards:
   - type: custom:layout-card
-    layout: vertical
-    max_columns: 3
+    layout_type: custom:vertical-layout
+    layout:
+      max_cols: 3
     cards:
       - type: vertical-stack
         cards:
@@ -13,39 +14,38 @@ cards:
             show_empty: false
             unique: true
             card:
-              type: glance
-              title: "Движение"
-              show_header_toggle: false
-              columns: 4
+              type: entities
+              title: "Статус зон"
+            sort: 
+              method: name
+              ignore_case: true
             filter:
               include:
                 - entity_id: "binary_sensor.*_motion"
-                - entity_id: "binary_sensor.*_occupancy"
+                  options:
+                    type: custom:multiple-entity-row
+                    #entity: this.entity_id
+                    show_state: false
+                    state_color: true
+                    secondary_info: last-changed
+                    entities:
+                      - entity: this.entity_id
+                        name: false
+                      - attribute: illuminance
+                        name: "Освещ."
+                        unit: "lx"
+                        hide_unavailable: true
+                      - attribute: battery
+                        name: "Заряд"
+                        unit: "%"
+                        hide_unavailable: true
               exclude:
+                - entity_id: "*_1_*"
+                - entity_id: "*_2_*"
                 - entity_id: "binary_sensor.front_door_motion"
                 - entity_id: "binary_sensor.wallpanel_*"
-                - entity_id: "*_1_*"
-                - entity_id: "*_2_*"
-            sort: name
 
-          - type: custom:auto-entities
-            show_empty: false
-            unique: true
-            card:
-              type: glance
-              title: "Освещённость"
-              show_header_toggle: false
-              columns: 4
-            filter:
-              include:
-                - entity_id: "sensor.*_illuminance"
-              exclude:
-                - entity_id: "*_1_*"
-                - entity_id: "*_2_*"
-                - entity_id: "*.narodmon_*"
-            sort: name
-
-      - break
+      - type: custom:layout-break
       - type: custom:auto-entities
         show_empty: false
         unique: true
@@ -60,7 +60,7 @@ cards:
                 secondary_info: brightness
         sort: name
 
-      - break
+      - type: custom:layout-break
       - type: custom:auto-entities
         show_empty: false
         unique: true

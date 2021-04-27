@@ -141,9 +141,9 @@ automation:
           minutes: 5
       - platform: state
         entity_id:
-          - sensor.monitor_hallway
-          - sensor.monitor_bedroom
-        to: 'offline'
+          - binary_sensor.monitor_hallway
+          - binary_sensor.monitor_bedroom
+        to: 'off'
         for:
           minutes: 5
     action:

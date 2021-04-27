@@ -57,11 +57,3 @@ automation:
 
 webhook:
 
-zigbee2mqtt_networkmap:
-  #topic: your topic (optional, default zigbee2mqtt)
-panel_iframe:
-  networkmap:
-    title: 'Zigbee Map'
-    url: '/local/community/zigbee2mqtt_networkmap/map.html'
-    icon: 'mdi:graphql'
-

@@ -22,6 +22,12 @@ binary_sensor:
         value_template: >-
           {{ is_state('binary_sensor.kitchen_1_motion', 'on')
           or is_state('binary_sensor.kitchen_2_motion', 'on') }}
+        attribute_templates:
+          illuminance: >-
+            {{ states('sensor.kitchen_illuminance')|int }}
+          battery: >-
+            {{ [state_attr('sensor.kitchen_1_illuminance', 'battery'),
+                state_attr('sensor.kitchen_2_illuminance', 'battery') ]|min }}
 
 
 sensor:
@@ -31,8 +37,8 @@ sensor:
         device_class: illuminance
         unit_of_measurement: "lx"
         value_template: >-
-          {{ ((states('sensor.kitchen_1_illuminance')|float
-              + states('sensor.kitchen_2_illuminance')|float ) / 2)|int }}
+          {{ ((states('sensor.kitchen_1_illuminance')|int
+              + states('sensor.kitchen_2_illuminance')|int ) / 2)|int }}
 
 
 iaquk:
@@ -43,51 +49,6 @@ iaquk:
 
 
 automation:
-#  - alias: '[House] Kitchen Fan Auto'
-#    initial_state: on
-#    trigger:
-#      - platform: state
-#        entity_id: sensor.kitchen_temperature
-#      - platform: state
-#        entity_id: binary_sensor.kitchen_motion
-#        to: 'on'
-#    condition:
-#      - condition: state
-#        entity_id: binary_sensor.is_day
-#        state: 'on'
-#      - condition: state
-#        entity_id: binary_sensor.kitchen_motion
-#        state: 'on'
-#    variables:
-#      outer_temp: states('sensor.gismeteo_temperature')|float
-#      inner_temp: states('sensor.kitchen_temperature')|float
-#    action:
-#      - service_template: >
-#          {% if outer_temp > 24 and inner_temp > (outer_temp
-#                - 2 * ((states('switch.shelly_kitchen_fan_plug') == 'on')|int)) %}
-#            switch.turn_on
-#          {% else %}
-#            switch.turn_off
-#          {% endif %}
-#        data:
-#          entity_id: switch.shelly_kitchen_fan_plug
-
-#  - alias: '[House] Kitchen Fan Stop when not needed'
-#    initial_state: on
-#    trigger:
-#      - platform: state
-#        entity_id: binary_sensor.is_day
-#        to: 'off'
-#      - platform: state
-#        entity_id: binary_sensor.kitchen_motion
-#        to: 'off'
-#        for:
-#          minutes: !secret nomotion_minutes
-#    action:
-#      - service: switch.turn_off
-#        data:
-#          entity_id: switch.shelly_kitchen_fan_plug
-  
   - alias: '[Lights] Kitchen Lights On when Motion'
     trigger:
       - platform: state
@@ -106,7 +67,7 @@ automation:
     action:
       service: light.turn_on
       entity_id: light.shelly_kitchen_tabletop_light
-  
+  #  
   - alias: '[Lights] Kitchen Lights Off when no Motion'
     trigger:
       platform: state
@@ -117,4 +78,49 @@ automation:
     action:
       service: homeassistant.turn_off
       entity_id: group.kitchen_lights
+
+  - alias: '[House] Kitchen Fan Auto'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: sensor.kitchen_temperature
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        to: 'on'
+    condition:
+      - condition: state
+        entity_id: binary_sensor.is_day
+        state: 'on'
+      - condition: state
+        entity_id: binary_sensor.kitchen_motion
+        state: 'on'
+    variables:
+      outer_temp: states('sensor.gismeteo_temperature')|float
+      inner_temp: states('sensor.kitchen_temperature')|float
+    action:
+      - service_template: >
+          {% if outer_temp > 24 and inner_temp > (outer_temp
+                - 2 * ((states('switch.kitchen_switch') == 'on')|int)) %}
+            switch.turn_on
+          {% else %}
+            switch.turn_off
+          {% endif %}
+        data:
+          entity_id: switch.kitchen_switch
+  #
+  - alias: '[House] Kitchen Fan Stop when not needed'
+    initial_state: on
+    trigger:
+      - platform: state
+        entity_id: binary_sensor.is_day
+        to: 'off'
+      - platform: state
+        entity_id: binary_sensor.kitchen_motion
+        to: 'off'
+        for:
+          minutes: !secret nomotion_minutes
+    action:
+      - service: switch.turn_off
+        data:
+          entity_id: switch.kitchen_switch
 

@@ -45,17 +45,19 @@ group:
       - binary_sensor.sleeping_limych
 
 
-sensor:
-  - platform: mqtt
-    state_topic: 'presence/hallway/status'
-    name: Monitor Hallway
-
-  - platform: mqtt
-    state_topic: 'presence/bedroom/status'
-    name: Monitor Bedroom
-
-
 binary_sensor:
+  - platform: mqtt
+    name: Monitor Hallway
+    state_topic: 'presence/hallway/status'
+    payload_on: "online"
+    payload_off: "offline"
+
+  - platform: mqtt
+    name: Monitor Bedroom
+    state_topic: 'presence/bedroom/status'
+    payload_on: "online"
+    payload_off: "offline"
+
   - platform: template
     sensors:
       presence_owners:

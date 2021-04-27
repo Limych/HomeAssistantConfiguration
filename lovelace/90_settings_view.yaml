@@ -4,7 +4,9 @@ path: settings
 panel: true
 cards:
   - type: custom:layout-card
-    max_columns: 3
+    layout_type: custom:horizontal-layout
+    layout:
+      max_cols: 3
     cards:
 #      - type: custom:auto-entities
 #        unique: true
@@ -25,15 +27,7 @@ cards:
 #      #       - entity_id: "*_2"
 #      #       - entity_id: "*_management"
 
-      - type: custom:auto-entities
-        unique: true
-        card:
-          type: entities
-          title: "Battery warning"
-        filter:
-          include:
-            - group: group.battery_alert
-
+#      - type: custom:layout-break
       - type: custom:auto-entities
         show_empty: true
         unique: true
@@ -45,16 +39,7 @@ cards:
           include:
             - entity_id: '*firmware_update*'
 
-      - type: custom:auto-entities
-        show_empty: false
-        unique: true
-        card:
-          type: entities
-          title: "Батарейки"
-          show_header_toggle: false
-        filter:
-          include:
-            - group: group.battery_status
+      - !include cards/zigbee.yaml
 
       - type: vertical-stack
         cards:
@@ -75,7 +60,28 @@ cards:
                 - domain: history_graph
                 - entity_id: "media_player.emby_*"
 
-      - !include cards/zigbee.yaml
+#      - type: custom:layout-break
+      - type: vertical-stack
+        cards:
+          - type: custom:auto-entities
+            show_empty: false
+            unique: true
+            card:
+              type: entities
+              title: "Батарейки"
+              show_header_toggle: false
+            filter:
+              include:
+                - group: group.battery_status
+          - type: custom:auto-entities
+            unique: true
+            card:
+              type: entities
+              title: "Battery warning"
+            filter:
+              include:
+                - group: group.battery_alert
 
+#      - type: custom:layout-break
       - !include links_card.yaml
       - !include dev_card_content.yaml

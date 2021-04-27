@@ -98,7 +98,6 @@ automation:
           datetime: "{{ now().strftime('%Y-%m-%d %H:%M:%S') }}"
 
   -
-    hide_entity: true
     trigger:
       platform: time_pattern
       seconds: '*'
@@ -170,7 +169,6 @@ automation:
           message: "Сушка белья начата."
 
   -
-    hide_entity: true
     trigger:
       platform: time_pattern
       seconds: '*'

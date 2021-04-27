@@ -4,8 +4,9 @@ panel: true
 path: weather
 cards:
   - type: custom:layout-card
-    layout: vertical
-    max_columns: 3
+    layout_type: custom:vertical-layout
+    layout:
+      max_cols: 3
     cards:
       - type: vertical-stack
         cards:
@@ -134,22 +135,26 @@ cards:
 #                entities:
 #                  - sensor.pressure_mmhg
 
+      - type: custom:layout-break
+      - type: vertical-stack
+        cards:
+          - type: custom:weather-card-chart
+            entity: weather.gismeteo
+            mode: hourly
+            chart_only: true
+          - type: custom:weather-card-chart
+            entity: weather.gismeteo_daily
+            mode: daily
+            chart_only: true
+
+      - type: custom:layout-break
+      - type: vertical-stack
+        cards:
           - !include cards/weather_windy.yaml
+          - type: picture
+            image: https://www.foreca.ru/meteogram.php?loc_id=100819827&lang=ru
 
-          - type: vertical-stack
-            cards:
-              - type: custom:weather-card-chart
-                entity: weather.gismeteo
-                mode: hourly
-                chart_only: true
-              - type: custom:weather-card-chart
-                entity: weather.gismeteo_daily
-                mode: daily
-                chart_only: true
-              - type: picture
-                image: https://www.foreca.ru/meteogram.php?loc_id=100819827&lang=ru
-
-      - break
+      - type: custom:layout-break
       - type: history-graph
         title: "Температура за 48ч"
         hours_to_show: 48
@@ -175,7 +180,7 @@ cards:
           - entity: sensor.average_temperature
             name: "В среднем"
 
-      - break
+      - type: custom:layout-break
       - type: history-graph
         title: "Влажность за 48ч"
         hours_to_show: 48
@@ -197,7 +202,7 @@ cards:
           - entity: sensor.gismeteo_humidity
             name: "Gismeteo"
 
-      - break
+      - type: custom:layout-break
       - type: history-graph
         title: "Давление за 48ч"
         hours_to_show: 48

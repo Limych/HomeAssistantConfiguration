@@ -15,15 +15,13 @@ preload_cards:
   - custom:vertical-style-card
 views:
   - !include lovelace/00_home_view.yaml
-  - !include lovelace/05_weather_view.yaml
-  - !include lovelace/10_home_info_view.yaml
-  - !include lovelace/20_lights_view.yaml
-  - !include lovelace/30_system_info_view.yaml
-  # - !include lovelace/31_system_graphs.yaml
-  - !include lovelace/40_security_view.yaml
+  - !include lovelace/10_weather_view.yaml
+  - !include lovelace/20_home_info_view.yaml
+  - !include lovelace/30_lights_view.yaml
+  - !include lovelace/40_system_info_view.yaml
+  # - !include lovelace/41_system_graphs.yaml
+  - !include lovelace/50_security_view.yaml
   # - !include lovelace/60_traffic_view.yaml
-  # - !include lovelace/80_automations_view.yaml
-  # - !include lovelace/101_dashboard.yaml
   # - !include lovelace/areas.yaml
 
   - !include lovelace/90_settings_view.yaml

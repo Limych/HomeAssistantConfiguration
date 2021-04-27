@@ -4,8 +4,9 @@ panel: true
 path: home-info
 cards:
   - type: custom:layout-card
-    layout: vertical
-    max_columns: 3
+    layout_type: custom:vertical-layout
+    layout:
+      max_cols: 3
     cards:
       - type: vertical-stack
         cards:
@@ -98,7 +99,7 @@ cards:
                 entities:
                   - sensor.bedroom_iaq_index
 
-      - break
+      - type: custom:layout-break
       - type: vertical-stack
         cards:
           # - type: alarm-panel
@@ -145,31 +146,12 @@ cards:
                   # - entity: sensor.unlocked_by
                   #   name: "Front door last unlocked by"
                   #   secondary_info: last-changed
-                  - entity: sensor.monitor_hallway
+                  - entity: binary_sensor.monitor_hallway
                     secondary_info: last-changed
-                  - entity: sensor.monitor_bedroom
+                  - entity: binary_sensor.monitor_bedroom
                     secondary_info: last-changed
 
-          - type: custom:auto-entities
-            show_empty: false
-            unique: true
-            card:
-              type: glance
-              title: "Движение"
-              show_header_toggle: false
-              columns: 4
-            filter:
-              include:
-                - entity_id: "binary_sensor.*_motion"
-                - entity_id: "binary_sensor.*_occupancy"
-              exclude:
-                - entity_id: "binary_sensor.front_door_motion"
-                - entity_id: "binary_sensor.wallpanel_*"
-                - entity_id: "*_1_*"
-                - entity_id: "*_2_*"
-            sort: entity_id
-
-      - break
+      - type: custom:layout-break
       - type: history-graph
         title: "Температура за 48ч"
         hours_to_show: 48
@@ -185,7 +167,7 @@ cards:
           - sensor.bedroom_temperature
           - sensor.bathroom_temperature
 
-      - break
+      - type: custom:layout-break
       - type: history-graph
         title: "Влажность за 48ч"
         hours_to_show: 48
@@ -201,7 +183,7 @@ cards:
           - sensor.bedroom_humidity
           - sensor.bathroom_humidity
 
-      - break
+      - type: custom:layout-break
       - type: custom:auto-entities
         show_empty: false
         unique: true
