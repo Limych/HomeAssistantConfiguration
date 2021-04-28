@@ -24,10 +24,14 @@ binary_sensor:
           or is_state('binary_sensor.kitchen_2_motion', 'on') }}
         attribute_templates:
           illuminance: >-
-            {{ states('sensor.kitchen_illuminance')|int }}
+            {{ states('sensor.kitchen_illuminance') | int }}
           battery: >-
-            {{ [state_attr('sensor.kitchen_1_illuminance', 'battery'),
-                state_attr('sensor.kitchen_2_illuminance', 'battery') ]|min }}
+            {{ [
+                state_attr('binary_sensor.kitchen_1_motion', 'battery'),
+                state_attr('binary_sensor.kitchen_2_motion', 'battery'),
+                100,
+              ] | reject('none') | min
+            }}
 
 
 sensor:
@@ -37,8 +41,8 @@ sensor:
         device_class: illuminance
         unit_of_measurement: "lx"
         value_template: >-
-          {{ ((states('sensor.kitchen_1_illuminance')|int
-              + states('sensor.kitchen_2_illuminance')|int ) / 2)|int }}
+          {{ ((states('sensor.kitchen_1_illuminance') | int
+              + states('sensor.kitchen_2_illuminance') | int ) / 2) | int }}
 
 
 iaquk:

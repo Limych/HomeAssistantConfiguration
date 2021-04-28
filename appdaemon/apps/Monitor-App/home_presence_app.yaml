@@ -46,7 +46,7 @@ home_presence_app:
 #    - "D0:F8:8C:A1:EF:CB Limych Tablet L"
 
   known_beacons:
-    - "80:EA:CA:83:51:10 Limych Watch"
+    - "80:EA:CA:83:51:10 Limych_Watch"
   
   remote_monitors:
     disable: False

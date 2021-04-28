@@ -4,10 +4,11 @@ path: security
 panel: true
 cards:
   - type: custom:layout-card
-    layout: horizontal
+    layout_type: custom:horizontal-layout
+    layout:
+      max_cols: 3
     cards:
       - type: vertical-stack
-        max_columns: 3
         cards:
           - type: custom:button-card
             color_type: card
@@ -15,11 +16,6 @@ cards:
             name: "Статус безопасности"
             aspect_ratio: 4/1
             layout: icon_name
-            # tap_action:
-            #   action: call-service
-            #   service: input_boolean.toggle
-            #   service_data:
-            #     entity_id: input_boolean.security_show_more
             state:
               - value: "Safe"
                 color: green
@@ -33,11 +29,6 @@ cards:
                 styles:
                   card:
                     - animation: blink 2s ease infinite
-          # - type: conditional
-          #   conditions:
-          #     - entity: input_boolean.security_show_more
-          #       state: 'on'
-          #   card:
           - type: custom:auto-entities
             show_empty: false
             unique: true
@@ -59,10 +50,10 @@ cards:
                     entities:
                       - entity: this.entity_id
                         name: false
-                      - attribute: illuminance
-                        name: "Освещ."
-                        unit: "lx"
-                        hide_unavailable: true
+#                      - attribute: illuminance
+#                        name: "Освещ."
+#                        unit: "lx"
+#                        hide_unavailable: true
                       - attribute: battery
                         name: "Заряд"
                         unit: "%"

@@ -656,6 +656,8 @@ automation:
 
 - alias: battery_sensor_from_attributes
   initial_state: 'on'
+  mode: single
+  max_exceeded: silent
   trigger:
     - platform: event
       event_type: state_changed
