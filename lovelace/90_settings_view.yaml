@@ -29,7 +29,7 @@ cards:
 
 #      - type: custom:layout-break
       - type: custom:auto-entities
-        show_empty: true
+        show_empty: false
         unique: true
         card:
           type: entities
@@ -38,8 +38,6 @@ cards:
         filter:
           include:
             - entity_id: '*firmware_update*'
-
-      - !include cards/zigbee.yaml
 
       - type: vertical-stack
         cards:
@@ -61,27 +59,29 @@ cards:
                 - entity_id: "media_player.emby_*"
 
 #      - type: custom:layout-break
-      - type: vertical-stack
-        cards:
-          - type: custom:auto-entities
-            show_empty: false
-            unique: true
-            card:
-              type: entities
-              title: "Батарейки"
-              show_header_toggle: false
-            filter:
-              include:
-                - group: group.battery_status
-          - type: custom:auto-entities
-            unique: true
-            card:
-              type: entities
-              title: "Battery warning"
-            filter:
-              include:
-                - group: group.battery_alert
+      - type: custom:auto-entities
+        show_empty: false
+        unique: true
+        card:
+          type: entities
+          title: "Батарейки"
+          show_header_toggle: false
+        filter:
+          include:
+            - group: group.battery_status
+      - type: custom:auto-entities
+        unique: true
+        card:
+          type: entities
+          title: "Battery warning"
+        filter:
+          include:
+            - group: group.battery_alert
 
 #      - type: custom:layout-break
-      - !include links_card.yaml
-      - !include dev_card_content.yaml
+      - type: vertical-stack
+        cards:
+          - !include cards/zigbee.yaml
+          - !include cards/links.yaml
+          - !include cards/dev_content.yaml
+

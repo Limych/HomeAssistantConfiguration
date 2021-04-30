@@ -86,7 +86,7 @@ cards:
 
           - type: horizontal-stack
             cards:
-              - !include empty_card.yaml
+              - !include cards/empty.yaml
               - type: custom:mini-graph-card
                 name: "Спальня"
                 height: 75
@@ -207,4 +207,5 @@ cards:
             - entity_id: "sensor.*_tvoc"
         sort: name
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

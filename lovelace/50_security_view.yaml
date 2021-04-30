@@ -76,4 +76,5 @@ cards:
         camera_image: camera.front_door_live
         camera_view: live
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

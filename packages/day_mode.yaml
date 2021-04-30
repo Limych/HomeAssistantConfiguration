@@ -3,9 +3,9 @@ homeassistant:
   customize:
     input_select.day_mode:
       templates:
-        icon: >-
-          if state == 'Ночь' or state == 'Вечер' return 'mdi:weather-night';
-          return 'mdi:white-balance-sunny';
+        icon: |-
+          if state == 'Ночь' or state == 'Вечер' return 'mdi:weather-night'
+          return 'mdi:white-balance-sunny'
 
 
 input_select:
@@ -126,7 +126,7 @@ automation:
     trigger:
       # When all owners goes to sleep
       - platform: state
-        entity_id: group.sleeping_owners_all
+        entity_id: input_boolean.everyone_is_asleep
         to: 'on'
     condition:
       - condition: state
@@ -137,10 +137,6 @@ automation:
         data:
           entity_id: input_select.day_mode
           option: "Ночь"
-      ## Stop here if no owners at home
-      # - condition: state
-      #   entity_id: binary_sensor.presence_owners
-      #   state: 'on'
       # - service: notify.all
       #   data:
       #     title: 'Сладких снов!'

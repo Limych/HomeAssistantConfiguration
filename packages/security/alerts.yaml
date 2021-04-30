@@ -52,7 +52,7 @@ automation:
           entity_id: binary_sensor.presence_owners
           state: 'off'
         - condition: state
-          entity_id: group.sleeping_owners_all
+          entity_id: input_boolean.everyone_is_asleep
           state: 'on'
     action:
       - service: script.front_door_snapshot

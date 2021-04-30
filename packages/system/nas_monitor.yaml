@@ -26,31 +26,30 @@ homeassistant:
       unit_of_measurement: '°C'
       scan_interval: 300
       templates:
-        hs_color: >-
-          if (state > 55) return [0, 85];
-          else if (state > 45) return [40, 70];
-          else if (state < 25) return [40, 70];
-          else return [0, 0];
+        icon_color: |-
+          if (state > 55) return 'hsl(0, 85%, 50%)'
+          else if (state > 45) return 'hsl(40, 70%, 50%)'
+          else if (state < 25) return 'hsl(40, 70%, 50%)'
+          else return 'var(--paper-item-icon-color)'
     #
     sensor.nas_pool_*:
       icon: mdi:harddisk
     sensor.nas_pool_*_use_percent:
       icon: mdi:gauge
       templates:
-        hs_color: >-
-          if (state >= 90) return [0, 85];
-          else if (state >= 80) return [40, 70];
-          else return [0, 0];
+        icon_color: |-
+          if (state >= 90) return 'hsl(0, 85%, 50%)'
+          else if (state >= 80) return 'hsl(40, 70%, 50%)'
+          else return 'var(--paper-item-icon-color)'
     sensor.nas_pool_*_health:
       templates:
-        hs_color: >-
-          if (state === 'ONLINE') return [0, 0];
-          else if (state === 'DEGRADED') return [40, 70];
-          else return [0, 85];
-        card_bg_color: >-
-          if (state === 'ONLINE') return 'var(--paper-card-background-color)';
-          else if (state === 'DEGRADED') return 'rgb(200, 150, 0)';
-          else return 'rgb(250, 0, 0)';
+        icon_color: |-
+          if (state === 'ONLINE') return 'var(--paper-item-icon-color)'
+          else return 'var(--accent-color)'
+        card_bg_color: |-
+          if (state === 'ONLINE') return 'var(--paper-card-background-color)'
+          else if (state === 'DEGRADED') return 'rgb(200, 150, 0)'
+          else return 'rgb(250, 0, 0)'
 
   customize:
     sensor.nas_last_boot:
@@ -75,10 +74,10 @@ homeassistant:
       unit_of_measurement: '°C'
       friendly_name: 'CPU temperature'
       templates:
-        hs_color: >-
-          if (state > 80) return [0, 85];
-          else if (state > 60) return [40, 70];
-          else return [0, 0];
+        icon_color: |-
+          if (state > 80) return 'hsl(0, 85%, 50%)'
+          else if (state > 60) return 'hsl(40, 70%, 50%)'
+          else return 'var(--paper-item-icon-color)'
     #
     sensor.nas_memory_use_percent:
       friendly_name: 'Memory use'

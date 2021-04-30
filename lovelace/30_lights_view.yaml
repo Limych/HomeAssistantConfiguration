@@ -92,4 +92,5 @@ cards:
             - entity_id: "*_2_*"
             - entity_id: "*.narodmon_*"
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

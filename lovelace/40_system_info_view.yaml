@@ -62,4 +62,5 @@ cards:
               - entity: sensor.speedtest_upload
                 name: "Отправка"
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

@@ -130,4 +130,5 @@ cards:
 
       - !include cards/laundry.yaml
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

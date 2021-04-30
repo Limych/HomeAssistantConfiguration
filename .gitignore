@@ -9,7 +9,7 @@ home-assistant*
 !/www/community/
 
 /lovelace/99_test_view.yaml
-/lovelace/links_card.yaml
+/lovelace/cards/links.yaml
 /packages/test_package.yaml
 /packages/persons/
 

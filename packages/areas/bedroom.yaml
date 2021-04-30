@@ -24,3 +24,18 @@ iaquk:
       hcho: sensor.bedroom_hcho
       pm: sensor.bedroom_pm25
 
+
+media_player:
+  - platform: androidtv
+    name: Bedroom TV
+    device_class: androidtv
+    host: 192.168.1.82
+    state_detection_rules:
+      'com.plexapp.android':
+        - 'paused':
+            'media_session_state': 3  # this indentation is important!
+            'wake_lock_size': 1       # this indentation is important!
+        - 'playing':
+            'media_session_state': 3  # this indentation is important!
+        - 'standby'
+

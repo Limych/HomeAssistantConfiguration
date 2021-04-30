@@ -8,9 +8,10 @@ homeassistant:
   customize_glob:
     input_select.washing_machine_status:
       templates:
-        hs_color: "if (state === 'Ждёт') return [0, 0];
-        else if (state === 'Работает') return [40, 70];
-        else if (state === 'Очистка') return [0, 85];"
+        icon_color: >-
+          if (state === 'Ждёт') return 'hsl(0, 0, 50)';
+          else if (state === 'Работает') return 'hsl(40, 70, 50)';
+          else if (state === 'Очистка') return 'hsl(0, 85, 50)';
 
 
 input_select:
@@ -117,15 +118,15 @@ automation:
         entity_id: binary_sensor.washer
         to: 'off'
       - platform: state
-        entity_id: input_boolean.owners_are_awake
-        to: 'on'
+        entity_id: input_boolean.everyone_is_asleep
+        to: 'off'
     condition:
       - condition: state
         entity_id: binary_sensor.washer
         state: 'off'
       - condition: state
-        entity_id: input_boolean.owners_are_awake
-        state: 'on'
+        entity_id: input_boolean.everyone_is_asleep
+        state: 'off'
     action:
       - condition: state
         entity_id: input_select.washer_status

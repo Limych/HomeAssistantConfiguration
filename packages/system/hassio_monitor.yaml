@@ -3,10 +3,10 @@ homeassistant:
   customize:
     sensor.cpu_temperature:
       templates:
-        hs_color: >-
-          if (state > 80) return [0, 85];
-          else if (state > 60) return [40, 70];
-          else return [0, 0];
+        icon_color: |-
+          if (state > 80) return 'hsl(0, 85%, 50%)'
+          else if (state > 60) return 'hsl(40, 70%, 50%)'
+          else return 'var(--paper-item-icon-color)'
 
 
 input_boolean:

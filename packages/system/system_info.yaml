@@ -1,19 +1,26 @@
 ---
 homeassistant:
   customize_glob:
+    sensor.connection_lan_switch*:
+      icon: mdi:lan
+      templates:
+        icon_color: |-
+          if (state === 'Online') return 'var(--paper-item-icon-color)'
+          else return 'var(--accent-color)'
     sensor.system_*:
       icon: mdi:server-network
       templates:
-        hs_color: >-
-          if (state === 'Online') return [0, 0];
-          else if (state === 'Offline') return [0, 85];
-          else return [40, 70];
+        icon_color: |-
+          if (state === 'Online') return 'var(--paper-item-icon-color)'
+          else return 'var(--accent-color)'
     sensor.system_security_*:
       icon: mdi:security
     sensor.system_media_*:
       icon: mdi:speaker
-    sensor.connection_lan_switch*:
-      icon: mdi:lan
+      templates:
+        icon_color: |-
+          if (state === 'Online') return 'var(--paper-item-icon-color)'
+          else return 'var(--disabled-text-color)'
     sensor.system_media_*_tv:
       icon: mdi:television
 
@@ -32,6 +39,8 @@ homeassistant:
       icon: mdi:router-wireless
     sensor.system_server_media:
       icon: mdi:plex
+    sensor.system_server_acs:
+      icon: mdi:cog-box
     sensor.system_server_repo:
       icon: mdi:git
     sensor.system_server_syncthing:
@@ -91,10 +100,14 @@ sensor:
         friendly_name: "Media Server"
         value_template: >-
           {{ 'Online' if is_state('device_tracker.server_media', 'home') else 'Offline' }}
+      system_server_acs:
+        friendly_name: "Auto Configuration Server"
+        value_template: >-
+          {{ 'Online' if is_state('device_tracker.server_acs', 'home') else 'Offline' }}
       system_server_repo:
         friendly_name: "GIT Repository"
         value_template: >-
-          {{ 'Online' if is_state('device_tracker.server_repo', 'home') else 'Offline' }}
+          {{ 'Online' if is_state('device_tracker.server_gitlab', 'home') else 'Offline' }}
       system_server_syncthing:
         friendly_name: "Syncthing"
         value_template: >-

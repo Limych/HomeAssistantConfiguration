@@ -10,6 +10,8 @@ homeassistant:
       device_class: motion
     binary_sensor.*_occupancy:
       device_class: motion
+    binary_sensor.everyone_is_asleep:
+      icon: mdi:sleep
 
 
 group:
@@ -30,19 +32,6 @@ group:
       - binary_sensor.hallway_motion
       - binary_sensor.kitchen_motion
       - binary_sensor.living_room_motion
-
-  sleeping_owners_some:
-    name: "Хозяева спят (кто-то из)"
-    icon: mdi:sleep
-    all: false
-    entities:
-      - binary_sensor.sleeping_limych
-  sleeping_owners_all:
-    name: "Хозяева спят (все)"
-    icon: mdi:sleep
-    all: true
-    entities:
-      - binary_sensor.sleeping_limych
 
 
 binary_sensor:
@@ -73,12 +62,31 @@ binary_sensor:
           {{ is_state('binary_sensor.presence_owners', 'on')
           or is_state('input_boolean.guest_mode', 'on')
           or is_state('group.motion', 'on') }}
+          
+  - platform: bayesian
+    name: Everyone Is Asleep
+    probability_threshold: 0.95
+    prior: 0.42
+    observations:
+      - platform: state
+        entity_id: sun.sun
+        to_state: below_horizon
+        prob_given_true: 0.75
+      - platform: state
+        entity_id: sensor.system_media_bedroom_tv
+        to_state: "Offline"
+        prob_given_true: 0.65
+      - platform: template
+        value_template: >-
+          {{ is_state('group.motion', 'off')
+          and states.group.motion.last_changed > states.group.motion_public.last_changed }}
+        prob_given_true: 0.85
 
 
 input_boolean:
-  owners_are_awake:
-    name: "Хозяева не спят"
-    icon: mdi:human-handsup
+  everyone_is_asleep:
+    name: "Все жители спят"
+    icon: mdi:sleep
 
 
 automation:
@@ -120,20 +128,17 @@ automation:
         data_template:
           message: "Счастливого пути!"
 
-  - alias: '[Presence] Owners are Sleep'
+  - alias: '[Presence] Everyone is Asleep'
     initial_state: on
     trigger:
       - platform: state
-        entity_id: group.sleeping_owners_all
-        to: 'on'
-      - platform: state
-        entity_id: group.sleeping_owners_some
+        entity_id: binary_sensor.everyone_is_asleep
         to: 'on'
     action:
-      - service: input_boolean.turn_off
-        entity_id: input_boolean.owners_are_awake
+      - service: input_boolean.turn_on
+        entity_id: input_boolean.everyone_is_asleep
 
-  - alias: '[Presence] Owners are Awake'
+  - alias: '[Presence] Someone are Awake'
     initial_state: on
     trigger:
       - platform: state
@@ -144,8 +149,8 @@ automation:
         entity_id: input_select.day_mode
         state: 'Утро'
     action:
-      - service: input_boolean.turn_on
-        entity_id: input_boolean.owners_are_awake
+      - service: input_boolean.turn_off
+        entity_id: input_boolean.everyone_is_asleep
       # - service: notify.all
       #   data:
       #     message: 'С добрым утром!'

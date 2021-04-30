@@ -224,4 +224,5 @@ cards:
           - entity: sensor.gismeteo_pressure_mmhg
             name: "Gismeteo"
 
-      - !include dev_card.yaml
+      - !include cards/dev.yaml
+

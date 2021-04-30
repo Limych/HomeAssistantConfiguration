@@ -2,17 +2,18 @@
 homeassistant:
   customize_glob:
     sensor.*battery*:
-      unit_of_measurement: '%'
       templates:
-        hs_color: >-
-          if (state > 50) return [0, 0];
-          else if (state > 25) return [40, 70];
-          else return [0, 85];
+        icon_color: |-
+          if (state > 75) return 'hsl(100, 100%, 50%)'
+          else if (state > 50) return 'hsl(60, 100%, 50%)'
+          else if (state > 25) return 'hsl(35, 100%, 50%)'
+          else if (state <= 25) return 'hsl(0, 100%, 50%)'
+          else return 'var(--disabled-text-color)'
+
     sensor.*_pc_*:
       icon: mdi:laptop
       templates:
-        hs_color: >-
-          if (state === 'Online') return [0, 0];
-          else if (state === 'Offline') return [0, 85];
-          else return [40, 70];
+        icon_color: |-
+          if (state === 'Online') return 'var(--paper-item-icon-color)'
+          else return 'var(--disabled-text-color)'
 

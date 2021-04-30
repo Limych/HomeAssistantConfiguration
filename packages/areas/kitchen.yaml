@@ -30,8 +30,7 @@ binary_sensor:
                 state_attr('binary_sensor.kitchen_1_motion', 'battery'),
                 state_attr('binary_sensor.kitchen_2_motion', 'battery'),
                 100,
-              ] | reject('none') | min
-            }}
+              ] | reject('none') | min }}
 
 
 sensor:
@@ -98,13 +97,12 @@ automation:
       - condition: state
         entity_id: binary_sensor.kitchen_motion
         state: 'on'
-    variables:
-      outer_temp: states('sensor.gismeteo_temperature')|float
-      inner_temp: states('sensor.kitchen_temperature')|float
     action:
       - service_template: >
+          {% set outer_temp = states('sensor.gismeteo_temperature') | float %}
+          {% set inner_temp = states('sensor.kitchen_temperature') | float %}
           {% if outer_temp > 24 and inner_temp > (outer_temp
-                - 2 * ((states('switch.kitchen_switch') == 'on')|int)) %}
+                - 2 * ((states('switch.kitchen_switch') == 'on') | int)) %}
             switch.turn_on
           {% else %}
             switch.turn_off
