@@ -51,7 +51,7 @@ jobs:
 #  # - perl -i -pe 'while (/- platform: rpi_gpio/) { $_ = <>; $_ = <> while !/^\s*-/ && !eof(); }' packages/areas/hallway.yaml
 #  - rm packages/areas/hallway.yaml
       - name: Run Home Assistant Configuration Check
-        uses: frenck/action-home-assistant@v1.1.1
+        uses: frenck/action-home-assistant@v1.3
         with:
           secrets: ./tests/fake_secrets.yaml
           version: "${{ matrix.version }}"
