@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out configuration from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.2
       - name: Run yamllint
         uses: frenck/action-yamllint@v1.1
 
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out configuration from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.2
       - name: Running Remark lint
         uses: "docker://pipelinecomponents/remark-lint:latest"
         continue-on-error: true
@@ -42,7 +42,7 @@ jobs:
         version: ["stable", "beta", "dev"]
     steps:
       - name: Check out configuration from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.2
       - name: Create dummy files
         run: |
           touch ./home-assistant.log
@@ -62,7 +62,7 @@ jobs:
     needs: [yamllint]
     steps:
       - name: Check out configuration from GitHub
-        uses: actions/checkout@v2.4.0
+        uses: actions/checkout@v3.0.2
       - name: Set up Python 3.8
         uses: actions/setup-python@v2.3.1
         with:
